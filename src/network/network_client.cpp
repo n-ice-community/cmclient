@@ -41,6 +41,9 @@
 
 #include "../safeguards.h"
 
+#include "core/game_info.h"
+#include "../commands_token_gui.h"
+
 /* This file handles all the client-commands */
 
 void SyncCMUser(const std::string &msg);
@@ -1147,6 +1150,28 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_CONFIG_UPDATE(P
 
 	_network_server_max_companies = p->Recv_uint8();
 	_network_server_name = p->Recv_string(NETWORK_NAME_LENGTH);
+
+	Debug(net, 1, "Got server name {}. Updating community", _network_server_name);
+
+	if (_network_server_name.find("n-ice.org") != std::string::npos) {
+		if(_settings_client.gui.community != 1) {
+			_settings_client.gui.community = 1;
+			GetCommunityServerListText();
+		}
+		Debug(net, 2, "joined n-ice \"{}\"", _settings_client.gui.community);
+	} else if (_network_server_name.find("BTPro.nl") != std::string::npos) {
+		if (_settings_client.gui.community != 2) {
+			_settings_client.gui.community = 2;
+			GetCommunityServerListText();
+		}
+		Debug(net, 2, "joined BTpro \"{}\"", _settings_client.gui.community);
+	}
+	else { // Unknown Server
+		_settings_client.gui.community = 0;
+	}
+
+	if(_settings_client.gui.community != 0) ShowTokenLogin();
+
 
 	return NETWORK_RECV_STATUS_OKAY;
 }

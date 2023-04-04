@@ -697,6 +697,7 @@ enum WindowClass {
 	 * Frame time graph; %Window numbers:
 	 *   - 0 = #FrametimeGraphWindowWidgets
 	 */
+    WC_CC_TOKENLOGIN,
 	WC_FRAMETIME_GRAPH,
 	WC_ZONING_TOOLBAR,
 	WC_COMMAND_TOOLBAR,

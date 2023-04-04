@@ -6054,3 +6054,99 @@ CM_STR_WATCH_LOCATION_TOOLTIP                      :{BLACK}Centre the main view 
 
 CM_STR_LAYOUT_NUM :{BLACK}{NUM}
 CM_STR_LAYOUT_RANDOM :{BLACK}rng
+
+######## community ########
+STR_NETWORK_CLIENT_LIST_GET_TOKEN                               :{LTBLUE}Token Login
+STR_NETWORK_CC_SELECT_NICE                                      :{BLACK}N-ICE
+STR_NETWORK_CC_SELECT_NICE_TOOLTIP                              :{BLACK}Select N-ICE servers
+STR_NETWORK_CC_SELECT_BTPRO                                     :{BLACK}BTPRO
+STR_NETWORK_CC_SELECT_BTPRO_TOOLTIP                             :{BLACK}Select BTPro servers
+STR_NETWORK_CC_SELECT_REDDIT                                    :{BLACK}REDDIT
+STR_NETWORK_CC_SELECT_REDDIT_TOOLTIP                            :{BLACK}Select Reddit servers
+STR_NETWORK_CC_SELECT_CITYMANIA                                 :{BLACK}CITYMANIA
+STR_NETWORK_CC_SELECT_CITYMANIA_TOOLTIP                         :{BLACK}Select CityMania servers
+
+STR_CC_SPACES                                                   :{BLACK}{NBSP}{NBSP}
+STR_CC_SEPARATOR1                                               :{CREAM} ||{NBSP}
+STR_CC_SEPARATOR                                                :{SILVER}{STRING}
+STR_CC_SEPARATOR_DEFAULT                                        :
+STR_CC_SEPARATOR_NICE                                           :## Visit n-ice.org ##
+STR_CC_SEPARATOR_BTPRO                                          :## Visit openttd.btpro.nl ##
+
+STR_CC_USER_TEXT                                                :{BLACK}User:{NBSP}
+STR_CC_USER_WHITE                                               :{WHITE}{RAW_STRING}
+STR_CC_USER_CHANGE                                              :{BLACK}...
+STR_CC_USER_ENTER                                               :{BLACK}Enter your account User name
+STR_CC_USER_CHANGE_TOOLTIP                                      :{BLACK}Enter acccount User name
+STR_CC_PASSWORD                                                 :{BLACK}PW:{NBSP}
+STR_CC_PASSWORD_ENTER                                           :{BLACK}Enter your account Password
+STR_CC_PASSWORD_CHANGE                                          :{BLACK}...
+STR_CC_PASSWORD_CHANGE_TOOLTIP                                  :{BLACK}Enter account Password
+
+STR_CC_GLOBAL_COMMANDS_TITLE                                    :{WHITE}Token Login tool
+STR_CC_TOKEN_WELCOME                                            :{BLACK}Welcome back {WHITE}{RAW_STRING}{BLACK} :)
+STR_CC_TOKEN_CLICKME                                            :{BLACK}Click the big button to Login automatically
+STR_CC_TOKEN_ENJOY                                              :{BLACK}  Respect the rules and enjoy the game. :)
+STR_CC_TOKEN_LOGIN                                              :{LTBLUE}Get Token --> Login
+STR_CC_TOKEN_LOGIN_TOOLTIP                                      :{BLACK}Get Token from website and executes !login XXXX
+STR_CC_TOKEN_LOGIN_ERROR                                        :{WHITE}Wrong Username or Password!
+
+STR_NETWORK_SERVER_LIST_CC_HEADER                               :{BLACK}{STRING}
+STR_NETWORK_SERVER_LIST_CC_DEFAULT                              :Select community
+STR_NETWORK_SERVER_LIST_CC_NICE                                 :n-ice | #n-ice.org#
+STR_NETWORK_SERVER_LIST_CC_BTPRO                                :BTPro | #openttd.btpro.nl#
+STR_CC_SERVERS_TOOLTIP                                          :Active Community
+
+STR_NETWORK_SERVER_LIST_JOIN_GAME_CC_WEBSITE                    :{BLACK}Website
+STR_NETWORK_SERVER_LIST_JOIN_GAME_CC_WEBSITE_TOOLTIP            :{BLACK}Open website in browser
+STR_NETWORK_SERVER_LIST_JOIN_GAME_CC_SERVERS_S                  :{WHITE}Server:
+STR_NETWORK_SERVER_LIST_JOIN_GAME_CC_SERVERS                    :{BLACK}Forum
+STR_NETWORK_SERVER_LIST_JOIN_GAME_CC_SERVERS_TOOLTIP            :{BLACK}Open Forum in browser of active community
+STR_NETWORK_SERVER_LIST_JOIN_GAME_CC_SERVERS_DONATE             :{BLACK}Donate
+STR_NETWORK_SERVER_LIST_JOIN_GAME_CC_SERVERS_DONATE_TOOLTIP     :{BLACK}Help us keeping good quality servers and community
+STR_NETWORK_SERVER_LIST_JOIN_GAME_IRC_CHAT                      :{BLACK}IRC Chat
+STR_NETWORK_SERVER_LIST_JOIN_GAME_IRC_CHAT_TOOLTIP              :{BLACK}Open mibbit IRC webclient to connect to IRC channel
+STR_NETWORK_SERVER_LIST_JOIN_GAME_IRC_SERVERS_CHAT              :{BLACK}Servers
+STR_NETWORK_SERVER_LIST_JOIN_GAME_IRC_SERVERS_CHAT_TOOLTIP      :{BLACK}Open mibbit IRC webclient to connect to Servers IRC channel
+STR_NETWORK_SERVER_LIST_JOIN_GAME_SERVER_RULES                  :{BLACK}Rules
+STR_NETWORK_SERVER_LIST_JOIN_GAME_SERVER_RULES_TOOLTIP          :{BLACK}Open Rules page in browser (of selected community)
+STR_NETWORK_SERVER_LIST_JOIN_GAME_SERVER_WIKI                   :{BLACK}Wiki
+STR_NETWORK_SERVER_LIST_JOIN_GAME_SERVER_WIKI_TOOLTIP           :{BLACK}Open Wiki page in browser (of selected community)
+STR_NETWORK_SERVER_LIST_JOIN_GAME_SERVER_VIP                    :{BLACK}VIP's
+STR_NETWORK_SERVER_LIST_JOIN_GAME_SERVER_VIP_TOOLTIP            :{BLACK}Open VIP page in browser (of selected community)
+
+STR_CC_SERVER_FREELANCER                                        :{WHITE}No community selected
+STR_NETWORK_DIRECT_JOIN_GAME                                    :{BLACK}{RAW_STRING}
+STR_NETWORK_DIRECT_JOIN_GAME_TOOLTIP                            :{BLACK}Join server directly
+STR_CC_BUILD                                                    :{BLACK}(Build 130A)
+STR_CC_ADMIN_LOGIN_WRONG_SERVER                                 :{BLACK}Not a correct community server
+STR_CC_IRC_LINK_CHAT                                            :{BLACK}IRC Chat
+STR_CC_IRC_LINK_CHAT_TOOLTIP                                    :{BLACK}Open mibbit in browser to connect to #btpro-chat IRC channel
+STR_CC_IRC_LINK_SERVERS                                         :{BLACK}IRC Servers
+STR_CC_IRC_LINK_SERVERS_SPACER                                  :{BLACK}{NBSP}{NBSP}
+STR_CC_IRC_LINK_SERVERS_TOOLTIP                                 :{BLACK}Open mibbit in browser to connect to #btpro-openttd IRC channel
+STR_CC_WIKI_RULES_PAGE                                          :{YELLOW}Detailed Rules
+STR_CC_WIKI_RULES_PAGE_STATUS                                   :{BLACK}Rules Wiki
+STR_CC_WIKI_RULES_PAGE_STATUS_TOOLTIP                           :{BLACK}Open Rules Wiki page in browser
+STR_CC_WIKI_RULES_PAGE_TOOLTIP                                  :{BLACK}Open browser in Rules Wiki page
+STR_CC_VIP                                                      :{GREEN}VIP's
+
+STR_CC_SERVER_LIST_UNREACHABLE                                  :{WHITE}Couldn't get server details
+STR_CC_SERVER_DISABLED                                          :{WHITE}Server is Disabled / Offline
+STR_CC_SERVER_LIST_ERROR_FILE                                   :{WHITE}Error on getting servers file
+
+###community choice - settings
+STR_CONFIG_SETTING_COMMUNITY                                    :Choose your community: {STRING2}
+STR_CONFIG_SETTING_CLIENT_COMMUNITY                             :Freelancer
+STR_CONFIG_SETTING_CLIENT_COMMUNITY_NICE                        :n-ice / http://n-ice.org
+STR_CONFIG_SETTING_CLIENT_COMMUNITY_BTPRO                       :BTPro / https://openttd.btpro.nl
+
+STR_BT_NEW_CLIENT_AVAILABLE                                     :{WHITE}## ATTENTION ## There's a new BTPro client available. Visit openttd.btpro.nl (Website button below :)
+STR_CC_WIKI_USER_PAGE                                           :{BLACK}{RAW_STRING}
+STR_CC_WIKI_USER_PAGE_TOOLTIP                                   :{BLACK}Open browser in Community Website
+
+STR_CC_OTHER_TOKEN_WSA_ERROR                                    :{WHITE}WSAStartup() failed
+STR_CC_OTHER_TOKEN_SOCKET_ERROR                                 :{WHITE}socket() failed
+STR_CC_OTHER_TOKEN_CONNECT_ERROR                                :{WHITE}connect() failed
+STR_CC_OTHER_TOKEN_SENT_ERROR                                   :{WHITE}send() sent a different number of bytes than expected
+STR_CC_OTHER_TOKEN_LOGIN_ERROR                                  :{WHITE}Wrong Username or Password!

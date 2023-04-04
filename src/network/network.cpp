@@ -45,6 +45,11 @@
 
 #include "../safeguards.h"
 
+#include "../settings_func.h"
+#include <iostream> //std
+#include "../strings_func.h"
+#include "../citymania/cm_base64.hpp"
+
 #ifdef DEBUG_DUMP_COMMANDS
 #include "../fileio_func.h"
 /** When running the server till the wait point, run as fast as we can! */
@@ -83,6 +88,11 @@ uint32 _sync_frame;                   ///< The frame to perform the sync check.
 bool _network_first_time;             ///< Whether we have finished joining or not.
 CompanyMask _network_company_passworded; ///< Bitmask of the password status of all companies.
 bool _novarole = false;
+
+std::string _server_list_text;
+char *_cc_address;  // current adddress
+int _cc_porti;      // current port
+uint8 _fromlast = 0;
 
 static_assert((int)NETWORK_COMPANY_NAME_LENGTH == MAX_LENGTH_COMPANY_NAME_CHARS * MAX_CHAR_LENGTH);
 
@@ -728,6 +738,215 @@ void NetworkRebuildHostList()
 	}
 }
 
+/** To handle Community connections */
+class CommunityLoginManager: public HTTPCallback {
+public:
+	//CommunityLoginManager(const char *u, const char *p): username(u), password(p) {}
+	CommunityLoginManager() {}
+
+	void initiateLoginSequence() {
+    CloseWindowByClass(WC_CC_TOKENLOGIN);
+    char uri[512];
+    const char *np;
+    std::string decoded;
+    std::string login_user;
+    const char *login_userch;
+    //IConsolePrint(CC_INFO, "INITIATING LOGIN SEQUENCE");
+    if(_settings_client.gui.community == 1){
+      decoded = urlencode(_settings_client.network.community_password[0]);
+      np = decoded.c_str();
+      login_user = _settings_client.network.community_user[0];
+      login_user = urlencode(login_user);
+      login_userch = login_user.c_str();
+      seprintf(uri, lastof(uri), "http://n-ice.org/openttd/gettoken_md5salt.php?user=%s&password=%s", login_userch, np);
+    } else if(_settings_client.gui.community == 2){
+      //decoded = base64_decode(_settings_client.network.community_password[1]);
+      decoded = _settings_client.network.community_password[1];
+      decoded = urlencode(decoded);
+      np = decoded.c_str();
+      login_user = _settings_client.network.community_user[1];
+      login_user = base64_encode(reinterpret_cast<const unsigned char*>(login_user.c_str()), login_user.length());
+      login_user = urlencode(login_user);
+      login_userch = login_user.c_str();
+      seprintf(uri, lastof(uri), "https://openttd.btpro.nl/gettoken-enc.php?user=%s&password=%s", login_userch, np);
+      //NetworkClientSendChat(NETWORK_ACTION_CHAT_CLIENT, DESTTYPE_CLIENT, CLIENT_ID_SERVER , uri);  // only to see result on testings
+    }
+    std::cout << "sending to http server: " << uri << std::endl;
+    this->cursor = this->buf;
+    NetworkHTTPSocketHandler::Connect(uri, this);
+	}
+
+	void sendLoginString() {
+    char b[16];
+    seprintf(b, lastof(b), "!login %s", this->buf);
+    NetworkClientSendChat(NETWORK_ACTION_CHAT_CLIENT, DESTTYPE_CLIENT, CLIENT_ID_SERVER , b);
+	}
+
+	void inspectLoginData() {
+    //IConsolePrint(CC_INFO, "INSPECTING DATA");
+    if (this->cursor - this->buf == 4) {
+      this->sendLoginString();
+      //IConsolePrint( CC_INFO, "*** Community Authentification successful ***");
+    } else {
+      //IConsolePrint(CC_ERROR, b);
+      ShowErrorMessage(STR_CC_OTHER_TOKEN_LOGIN_ERROR, INVALID_STRING_ID, WL_ERROR);
+     }
+	}
+
+	virtual void OnFailure() {
+    //std::cout << "*** UNABLE TO RETRIEVE LOGIN TOKEN FROM HTTP SERVER ***" << std::endl;
+    ShowErrorMessage(STR_CC_OTHER_TOKEN_CONNECT_ERROR, INVALID_STRING_ID, WL_ERROR);
+	}
+
+	virtual void OnReceiveData( const char *data, size_t length) {
+    size_t i = length;
+
+    if (data == 0) {
+      std::cout << "*** RECEIVED ALL HTTP DATA ***" << std::endl;
+      this->inspectLoginData();
+      this->cursor = 0;
+    } else {
+      std::cout << "*** RECEIVING HTTP DATA ***" << std::endl;
+      while ( this->cursor - this->buf < 512 && i) {
+        *this->cursor = *data;
+        data++;
+        this->cursor++;
+        i--;
+      }
+      if (this->cursor - this->buf >= 512)
+        this->buf[511] = 0;
+      else
+        *this->cursor = 0;
+     }
+	}
+
+  std::string urlencode(const std::string &s)
+  {
+    //RFC 3986 section 2.3 Unreserved Characters (January 2005)
+    const std::string unreserved = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_.~";
+
+    std::string escaped="";
+    for(size_t i=0; i<s.length(); i++)
+    {
+        if (unreserved.find_first_of(s[i]) != std::string::npos)
+        {
+            escaped.push_back(s[i]);
+        }
+        else
+        {
+            escaped.append("%");
+            char buf[3];
+            seprintf(buf, lastof(buf), "%.2X", s[i]);
+            escaped.append(buf);
+        }
+    }
+    return escaped;
+  }
+
+private:
+	NetworkHTTPContentConnecter *conn;
+	char buf[512];
+	char	 *cursor;
+};
+
+static CommunityLoginManager loginmgr;
+
+void CommunityLoginManagerSend()
+{
+  loginmgr.initiateLoginSequence();
+}
+
+/** To handle Community Server list */
+class CommunityServerManager: public HTTPCallback {
+public:
+	CommunityServerManager() {}
+
+	void initiateServerSequence() {
+    char uri[512];
+    //IConsolePrint(CC_INFO, "INITIATING LOGIN SEQUENCE");
+    if(_settings_client.gui.community == 1){
+      seprintf(uri, lastof(uri), "http://n-ice.org/openttd/serverlist.txt");
+    } else if(_settings_client.gui.community == 2){
+      seprintf(uri, lastof(uri), "https://openttd.btpro.nl/btproservers.txt");
+    }
+    std::cout << "sending to http server: " << uri << std::endl;
+    this->cursor = this->buf;
+    NetworkHTTPSocketHandler::Connect(uri, this);
+	}
+
+	void SaveServerString() {
+    int tmpversion;
+    _server_list_text += this->buf;
+
+      if(_settings_client.gui.community == 2){
+        size_t posver = _server_list_text.find("bt.version.check:");
+        std::string saver = _server_list_text.substr(posver + 18, _server_list_text.find(";", posver + 18) - posver - 18);
+        tmpversion = atoi(saver.c_str());
+        _settings_client.gui.btpro_version = tmpversion;
+        SaveToConfig();
+      }
+	}
+
+  void inspectServerData() {
+    //IConsolePrint(CC_INFO, "INSPECTING DATA");
+    if (this->cursor - this->buf >= 4) {
+      this->SaveServerString();
+
+    } else {
+      ShowErrorMessage(STR_CC_OTHER_TOKEN_CONNECT_ERROR, INVALID_STRING_ID, WL_ERROR);
+     }
+	}
+
+	virtual void OnFailure() {
+    //std::cout << "*** UNABLE TO RETRIEVE LOGIN TOKEN FROM HTTP SERVER ***" << std::endl;
+    ShowErrorMessage(STR_CC_OTHER_TOKEN_CONNECT_ERROR, INVALID_STRING_ID, WL_ERROR);
+	}
+
+	virtual void OnReceiveData(const char *data, size_t length)
+	{
+		extern void ShowSelectGameWindow();
+		size_t i = length;
+
+		if (data == 0)
+		{
+			std::cout << "*** RECEIVED ALL HTTP DATA ***" << std::endl;
+
+			this->inspectServerData();
+
+			CloseWindowByClass(WC_SELECT_GAME);
+			/* If we are still in the menu reopen it */
+			if (_game_mode == GM_MENU) ShowSelectGameWindow();
+			this->cursor = 0;
+		} else {
+			std::cout << "*** RECEIVING HTTP DATA ***" << std::endl;
+			while (this->cursor - this->buf < 4096 && i)
+			{
+				*this->cursor = *data;
+				data++;
+				this->cursor++;
+				i--;
+			}
+			if (this->cursor - this->buf >= 4096)
+				this->buf[4095] = 0;
+			else
+				*this->cursor = 0;
+		}
+	}
+
+private:
+	NetworkHTTPContentConnecter *conn;
+	char buf[4096];
+	char	 *cursor;
+};
+
+static CommunityServerManager servermgr;
+
+void CommunityServerManagerSend()
+{
+  servermgr.initiateServerSequence();
+}
+
+
 /** Non blocking connection create to actually connect to servers */
 class TCPClientConnecter : TCPServerConnecter {
 private:
@@ -1294,6 +1513,67 @@ void NetworkShutDown()
 
 	NetworkCoreShutdown();
 }
+
+void GetCommunityServerListText(uint8 from){
+	if(_fromlast == _settings_client.gui.community || _settings_client.gui.community == 0) return;
+	_fromlast = _settings_client.gui.community;
+
+  _server_list_text.clear();
+
+  CommunityServerManagerSend();
+
+}
+
+bool GetCommunityServer(int number, bool findonly) {
+  //IConsolePrintF(CC_INFO, "Buf: %s", _server_list_text.c_str());
+	if(_server_list_text.empty()) return false;
+	_cc_address = NULL;
+
+	char server[32];
+	char port[16];
+
+	if(number < 10){
+		seprintf(server, lastof(server), "SERVER0%i", number);
+		seprintf(port, lastof(port), "PORT0%i", number);
+	}
+	else{
+		seprintf(server, lastof(server), "SERVER%i", number);
+		seprintf(port, lastof(port), "PORT%i", number);
+	}
+
+	size_t posaddress = _server_list_text.find(server);
+	size_t posport = _server_list_text.find(port);
+
+	if(posaddress != std::string::npos && posport != std::string::npos){
+		std::string saddress = _server_list_text.substr(posaddress + 10, _server_list_text.find(";", posaddress + 10) - posaddress - 10);
+		std::string sport = _server_list_text.substr(posport + 8, posport + 12);
+
+		//IConsolePrintF(CC_DEFAULT, "server: '%s'", saddress.c_str());
+		if(saddress.compare("DISABLED") == 0) return false;
+		else if(findonly) return true;
+
+		_cc_address = stredup(saddress.c_str(), nullptr);
+		_cc_porti = std::stoi(sport);
+		return true;
+	}
+	else if(findonly) return false;
+	ShowErrorMessage(STR_CC_SERVER_LIST_ERROR_FILE, INVALID_STRING_ID, WL_ERROR);
+	return false;
+}
+
+void SetClipboardInfo(char *output) {
+  #ifdef WIN32
+    const size_t len = strlen(output) + 1;
+    HGLOBAL hMem =  GlobalAlloc(GMEM_MOVEABLE, len);
+    memcpy(GlobalLock(hMem), output, len);
+    GlobalUnlock(hMem);
+    OpenClipboard(0);
+    EmptyClipboard();
+    SetClipboardData(CF_TEXT, hMem);
+    CloseClipboard();
+  #endif
+}
+
 
 #ifdef __EMSCRIPTEN__
 extern "C" {

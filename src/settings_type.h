@@ -232,6 +232,10 @@ struct GUISettings {
 	uint8 cm_graph_background;
 	bool cm_show_client_overlay;
 	bool cm_enable_polyrail_terraform;
+
+	uint8 community;  ///< chosen community nice=0, btpro=1
+    uint32 btpro_version;
+
 	/**
 	 * Returns true when the user has sufficient privileges to edit newgrfs on a running game
 	 * @return whether the user has sufficient privileges to edit newgrfs in an existing game
@@ -339,6 +343,8 @@ struct NetworkSettings {
 	std::string last_joined;                              ///< Last joined server
 	bool        no_http_content_downloads;                ///< do not do content downloads over HTTP
 	UseRelayService use_relay_service;                        ///< Use relay service?
+    std::string community_user[2];						  ///< webpage user to retrieve Token
+    std::string community_password[2];					  ///< webpage password to retrieve Token
 };
 
 /** Settings related to the creation of games. */

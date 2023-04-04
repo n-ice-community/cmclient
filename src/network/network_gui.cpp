@@ -47,6 +47,8 @@
 
 #include "../stringfilter_type.h"
 
+#include "../commands_token_gui.h"
+
 #ifdef __EMSCRIPTEN__
 #	include <emscripten.h>
 #endif
@@ -496,6 +498,9 @@ public:
 
 		this->querystrings[WID_NG_FILTER] = &this->filter_editbox;
 		this->filter_editbox.cancel_button = QueryString::ACTION_CLEAR;
+		//if community is chosen, filter by default
+		if(_settings_client.gui.community == 1) this->filter_editbox.text.Assign("n-ice");
+		else if(_settings_client.gui.community == 2) this->filter_editbox.text.Assign("BTPro");
 		this->SetFocusedWidget(WID_NG_FILTER);
 
 		/* As the Game Coordinator doesn't support "websocket" servers yet, we
@@ -1890,6 +1895,14 @@ public:
 
 				ShowDropDownList(this, BuildVisibilityDropDownList(), _settings_client.network.server_game_type, WID_CL_SERVER_VISIBILITY);
 				break;
+
+			case WID_CL_CLIENT_TOKEN_LOGIN: {
+				if (_settings_client.gui.community != 0)
+					Debug(net, 2, "Request Token form client list");
+					CommunityLoginManagerSend();
+				break;
+			}
+
 
 			case WID_CL_MATRIX: {
 				ButtonCommon *button = this->GetButtonAtPoint(pt);

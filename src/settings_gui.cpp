@@ -1613,6 +1613,7 @@ static SettingsContainer &GetSettingsTree()
 	{
 		/* Build up the dynamic settings-array only once per OpenTTD session */
 		main = new SettingsContainer();
+        main->Add(new SettingEntry("gui.community"));
 
 		SettingsPage *localisation = main->Add(new SettingsPage(STR_CONFIG_SETTING_LOCALISATION));
 		{

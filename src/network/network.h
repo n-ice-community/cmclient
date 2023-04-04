@@ -7,6 +7,7 @@
 
 /** @file network.h Basic functions/variables used all over the place. */
 
+#include <iomanip>  //string
 #ifndef NETWORK_H
 #define NETWORK_H
 
@@ -15,10 +16,21 @@ void NetworkShutDown();
 void NetworkDrawChatMessage();
 bool HasClients();
 
+// void initiateLoginSequence();
+void CommunityLoginManagerSend();
+void CommunityServerManagerSend();
+
 extern bool _networking;         ///< are we in networking mode?
 extern bool _network_server;     ///< network-server is active
 extern bool _network_available;  ///< is network mode available?
 extern bool _network_dedicated;  ///< are we a dedicated server?
 extern bool _is_network_server;  ///< Does this client wants to be a network-server?
+
+extern std::string _server_list_text;  //string with servers status
+extern char* _cc_address; //current adddress
+extern int _cc_porti; //current port
+extern uint8 _fromlast;
+void GetCommunityServerListText(uint8 from = 0);
+bool GetCommunityServer(int number, bool findonly = false);
 
 #endif /* NETWORK_H */

@@ -91,6 +91,7 @@ enum ClientListWidgets {
 	WID_CL_SERVER_INVITE_CODE,         ///< Invite code for this server.
 	WID_CL_SERVER_CONNECTION_TYPE,     ///< The type of connection the Game Coordinator detected for this server.
 	WID_CL_CLIENT_NAME,                ///< Client name.
+    WID_CL_CLIENT_TOKEN_LOGIN,         ///< Token Login
 	WID_CL_CLIENT_NAME_EDIT,           ///< Edit button for client name.
 	WID_CL_MATRIX,                     ///< Company/client list.
 	WID_CL_SCROLLBAR,                  ///< Scrollbar for company/client list.

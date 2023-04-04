@@ -119,7 +119,7 @@ char *CrashLog::LogCompiler(char *buffer, const char *last) const
 char *CrashLog::LogOpenTTDVersion(char *buffer, const char *last) const
 {
 	return buffer + seprintf(buffer, last,
-			"OpenTTD version: CityMania patched client  http://citymania.org\n\n"
+			"OpenTTD version: Patched client (Build 130A) \n"
 			" Version:    %s (%d)\n"
 			" NewGRF ver: %08x\n"
 			" Bits:       %d\n"
@@ -359,7 +359,7 @@ int CrashLog::CreateFileName(char *filename, const char *filename_last, const ch
 char *CrashLog::FillCrashLog(char *buffer, const char *last) const
 {
 	buffer += seprintf(buffer, last, "*** OpenTTD Crash Report ***\n\n");
-	buffer += seprintf(buffer, last, "*** OpenTTD Crash Report ***\nCityMania patched client  http://citymania.org\nPlease, unless you encounter this bug with unpatched OpenTTD version, report bug to CityMania team\n\n");
+	buffer += seprintf(buffer, last, "*** OpenTTD Crash Report ***\nPatched client (Build 130A)\nPlease, unless you encounter this bug with unpatched OpenTTD version, report bug to admins of your community.\n\n");
 	buffer += UTCTime::Format(buffer, last, "Crash at: %Y-%m-%d %H:%M:%S (UTC)\n");
 
 	YearMonthDay ymd;
