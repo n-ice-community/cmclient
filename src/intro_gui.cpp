@@ -624,7 +624,8 @@ NWidgetBase *MakeServerButtons(int *biggest_index)
 		hor->Add(spce);
 		NWidgetBackground *leaf = new NWidgetBackground(WWT_PANEL, COLOUR_ORANGE, WID_SGI_CC1 + i, NULL);
 		if(aactive[i] == 0) leaf->SetDisabled(true);
-		leaf->SetDataTip(STR_NETWORK_DIRECT_JOIN_GAME, STR_NETWORK_DIRECT_JOIN_GAME_TOOLTIP);
+		//leaf->SetDataTip(STR_NETWORK_DIRECT_JOIN_GAME, STR_NETWORK_DIRECT_JOIN_GAME_TOOLTIP);
+        leaf->SetDataTip(0x0, STR_NETWORK_DIRECT_JOIN_GAME_TOOLTIP);
 		leaf->SetMinimalSize(90, 15);
 		hor->Add(leaf);
 		i1++;
@@ -815,7 +816,7 @@ static const NWidgetPart _nested_select_game_widgets[] = {
 				NWidget(WWT_TEXT, COLOUR_ORANGE), SetMinimalSize(10, 0), SetDataTip(STR_CC_SEPARATOR1, STR_NULL),
 			EndContainer(),
 		EndContainer(),
-		//NWidgetFunction(MakeServerButtons),
+		NWidgetFunction(MakeServerButtons),
 	EndContainer(),
 	NWidget(NWID_SPACER), SetMinimalSize(0, 6),
 };
