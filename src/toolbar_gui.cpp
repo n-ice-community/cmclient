@@ -73,6 +73,8 @@
 
 #include "safeguards.h"
 
+/* community support */
+#include "commands_token_gui.h"
 
 /** Width of the toolbar, shared by statusbar. */
 uint _toolbar_width = 0;
@@ -1233,8 +1235,10 @@ static CallBackFunction MenuClickHelp(int index)
 {
 	switch (index) {
 		case  0: return PlaceLandBlockInfo();
-		case  1: citymania::ShowCommandsToolbar(); break;
-		case  2: citymania::ShowLoginWindow();     break;
+		//case  1: citymania::ShowCommandsToolbar(); break;
+        case 1 : break;
+		//case  2: citymania::ShowLoginWindow();     break;
+        case  2: ShowTokenLogin(); break;
 		case  3: IConsoleSwitch();                 break;
 		case  4: ShowAIDebugWindow();              break;
 		case  5: ShowScreenshotWindow();           break;

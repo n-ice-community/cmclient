@@ -6078,7 +6078,7 @@ STR_CC_USER_WHITE                                               :{WHITE}{RAW_STR
 STR_CC_USER_CHANGE                                              :{BLACK}...
 STR_CC_USER_ENTER                                               :{BLACK}Enter your account User name
 STR_CC_USER_CHANGE_TOOLTIP                                      :{BLACK}Enter acccount User name
-STR_CC_PASSWORD                                                 :{BLACK}PW:{NBSP}
+STR_CC_PASSWORD                                                 :{BLACK}Password:{NBSP}
 STR_CC_PASSWORD_ENTER                                           :{BLACK}Enter your account Password
 STR_CC_PASSWORD_CHANGE                                          :{BLACK}...
 STR_CC_PASSWORD_CHANGE_TOOLTIP                                  :{BLACK}Enter account Password
