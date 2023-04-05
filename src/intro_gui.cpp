@@ -15,7 +15,6 @@
 #include "textbuf_gui.h"
 #include "network/network.h"
 #include "genworld.h"
-#include "network/network_func.h"
 #include "network/network_gui.h"
 #include "network/network_content.h"
 #include "landscape_type.h"
@@ -29,7 +28,6 @@
 #include "language.h"
 #include "rev.h"
 #include "highscore.h"
-#include "3rdparty/md5/md5.h"
 #include "signs_base.h"
 #include "viewport_func.h"
 #include "vehicle_base.h"
@@ -44,16 +42,17 @@
 
 #include "safeguards.h"
 
-/* community client */
-#include "window_func.h" //ClosewindowbyID
-#include "console_func.h" //IConsolePrint
-#include "settings_func.h" //saveconfig
+/* community support */
+#include "network/network_func.h"
+#include "3rdparty/md5/md5.h"
+#include "window_func.h"			//ClosewindowbyID
+#include "console_func.h"			//IConsolePrint
+#include "settings_func.h"			//saveconfig
 #include "citymania/cm_base64.hpp"
 
 std::string _server_list_text_names;
 void ShowSelectGameWindow();
 extern void OSOpenBrowser(const char *url);
-// end
 
 /**
  * A viewport command for the main menu background (intro game).
@@ -275,22 +274,18 @@ struct SelectGameWindow : public Window {
 		if (intro_viewport_commands.size() == 1 && vc.vehicle == INVALID_VEHICLE) intro_viewport_commands.clear();
 	}
 
-  void OnQueryTextFinished(char *str) {
+	void OnQueryTextFinished(char *str) {
 		if (str == NULL) return;
-
-    int comm = _settings_client.gui.community; //chosen community
+		int comm = _settings_client.gui.community; //chosen community
 		switch (query_widget) {
-			case SGQ_CC_USER:
+			case SGQ_CC_USER: {
 				if (Utf8StringLength(str) >= NETWORK_NAME_LENGTH) break;
-				if(comm > 0 && comm <= 2){
-					_settings_client.network.community_user[comm-1] = str;
-				}
-				//strecpy(_settings_client.network.client_name, str, lastof(_settings_client.network.client_name));
+				if(comm > 0 && comm <= 2)_settings_client.network.community_user[comm-1] = str;
 				SaveToConfig();
 				this->SetDirty();
 				break;
-
-			case SGQ_CC_PASSWORD:{
+			}
+			case SGQ_CC_PASSWORD: {
 				if (Utf8StringLength(str) >= NETWORK_PASSWORD_LENGTH) break;
 				const char *np;
                 if (comm == 1) {
@@ -299,10 +294,7 @@ struct SelectGameWindow : public Window {
                     uint8 digest[16];
                     char hex_output[16*2 + 1];
                     password.Finish(digest);
-                    for (int di = 0; di < 16; ++di)
-                    {
-                        seprintf( hex_output + di * 2, lastof(hex_output), "%02x", digest[di]);
-                    }
+                    for (int di = 0; di < 16; ++di) seprintf( hex_output + di * 2, lastof(hex_output), "%02x", digest[di]);
                     char tobe_salted[4+16*2+6+1] = {0};
                     strecat(tobe_salted, "nice", lastof(tobe_salted));
                     strecat(tobe_salted+4, hex_output, lastof(tobe_salted));
@@ -310,16 +302,12 @@ struct SelectGameWindow : public Window {
                     assert(strlen(tobe_salted) == (sizeof(tobe_salted)-1));
                     salted_password.Append(tobe_salted, strlen(tobe_salted));
                     salted_password.Finish(digest);
-                    for (int di = 0; di < 16; ++di)
-                    {
-                        seprintf( hex_output + di * 2, lastof(hex_output), "%02x", digest[di]);
-                    }
+                    for (int di = 0; di < 16; ++di)seprintf( hex_output + di * 2, lastof(hex_output), "%02x", digest[di]);
 					_settings_client.network.community_password[comm-1] = hex_output;
                 } else {
 					std::string s = str;
 					std::string encoded = base64_encode(reinterpret_cast<const unsigned char*>(s.c_str()), s.length());
                     np = encoded.c_str();
-
 					_settings_client.network.community_password[comm-1] = np;
                 }
 				SaveToConfig();
@@ -388,23 +376,17 @@ struct SelectGameWindow : public Window {
 				break;
 
 			case WID_SGI_SERVERS:
-				//DrawString(r.left, r.right, r.top + 40, STR_CC_SERVER_FREELANCER, TC_FROMSTRING, SA_CENTER);
 				DrawStringMultiLine(r.left, r.right, r.top,  r.bottom, STR_CC_SERVER_FREELANCER, TC_FROMSTRING, SA_CENTER);
 				break;
 
 			default:
-				if(widget >= WID_SGI_CC1){
-					if(widget - WID_SGI_CC1 + 1 < 10){
-						seprintf(name, lastof(name), "NAME0%i", widget - WID_SGI_CC1 + 1);
-					}
-					else {
-						seprintf(name, lastof(name), "NAME%i", widget - WID_SGI_CC1 + 1);
-					}
+				if (widget >= WID_SGI_CC1){
+					if(widget - WID_SGI_CC1 + 1 < 10) seprintf(name, lastof(name), "NAME0%i", widget - WID_SGI_CC1 + 1);
+					else seprintf(name, lastof(name), "NAME%i", widget - WID_SGI_CC1 + 1);
 					size_t posname = _server_list_text_names.find(name);
 					std::string sname = _server_list_text_names.substr(posname + 8, _server_list_text_names.find(";", posname + 8) - posname - 8);
 					strecpy(sn, sname.c_str(), lastof(sn));
 					_cc_name = sn;
-
 					SetDParamStr(0, _cc_name);
 					DrawString(r.left, r.right, r.top + 3, STR_NETWORK_DIRECT_JOIN_GAME, TC_FROMSTRING, SA_CENTER);
 				}
@@ -447,19 +429,16 @@ struct SelectGameWindow : public Window {
 		switch(widget){
 			case WID_SGI_CC_USER:
 				if (_settings_client.gui.community != 0) {
-					SetDParamStr(0, _settings_client.network.community_user[_settings_client.gui.community-1]);
-				} else {
-					SetDParamStr(0, " ");
+					if (_settings_client.network.community_user[_settings_client.gui.community-1]=="") SetDParamStr(0, "?");
+					else SetDParamStr(0, _settings_client.network.community_user[_settings_client.gui.community-1]);
 				}
+				else SetDParamStr(0, " ");
 				break;
-
 			case WID_SGI_CC_HEADER:
 				SetDParam(0, STR_NETWORK_SERVER_LIST_CC_DEFAULT + (uint16)_settings_client.gui.community);
 				break;
 		}
 	}
-
-
 
 	void OnClick(Point pt, int widget, int click_count) override
 	{
@@ -509,7 +488,7 @@ struct SelectGameWindow : public Window {
 			case WID_SGI_GS_SETTINGS:     ShowGSConfigWindow(); break;
 			case WID_SGI_EXIT:            HandleExitGameRequest(); break;
 
-			//community stuff
+			/* community support */
 			case WID_SGI_CC_SELECT_NICE:
 				_settings_client.gui.community = _settings_client.gui.community != 1 ? 1 : 0;
 				IConsolePrint(CC_DEFAULT, "icomm: '{}'", _settings_client.gui.community);
@@ -561,23 +540,20 @@ struct SelectGameWindow : public Window {
 				this->query_widget = SGQ_CC_PASSWORD;
 				ShowQueryString(STR_EMPTY, STR_CC_PASSWORD_ENTER, 40, this, CS_ALPHANUMERAL, QSF_NONE);
 				break;
+            case WID_SGI_SERVERS:
+				break;
 
 			// directly to server #number
 			default:
 				if(widget >= WID_SGI_CC1){
 					if (GetCommunityServer(widget - WID_SGI_CC1 + 1)) {
-						if (_ctrl_pressed) {
-							NetworkClientConnectGame(fmt::format("{}:{}", _cc_address, _cc_porti), COMPANY_NEW_COMPANY);
-						} else {
-							NetworkClientConnectGame(fmt::format("{}:{}", _cc_address, _cc_porti), COMPANY_SPECTATOR);
-						}
+						if (_ctrl_pressed) NetworkClientConnectGame(fmt::format("{}:{}", _cc_address, _cc_porti), COMPANY_NEW_COMPANY);
+						else NetworkClientConnectGame(fmt::format("{}:{}", _cc_address, _cc_porti), COMPANY_SPECTATOR);
                         delete _cc_address;
 					}
-				} else {
-					ShowErrorMessage(STR_CC_SERVER_DISABLED, INVALID_STRING_ID, WL_ERROR);
 				}
+				else ShowErrorMessage(STR_CC_SERVER_DISABLED, INVALID_STRING_ID, WL_ERROR);
 				break;
-
 		}
 	}
 };
@@ -588,8 +564,9 @@ NWidgetBase *MakeServerButtons(int *biggest_index)
     _server_list_text_names = _server_list_text;
 
 	if(_settings_client.gui.community == 0 || _server_list_text.empty()){
-		NWidgetBackground *leaf = new NWidgetBackground(WWT_PANEL, COLOUR_BROWN, WID_SGI_SERVERS, NULL);
-		ver->Add(leaf);
+        /* disabled due assertion */
+		//NWidgetBackground *leaf = new NWidgetBackground(WWT_PANEL, COLOUR_BROWN, WID_SGI_SERVERS, NULL);
+		//ver->Add(leaf);
 		return ver;
 	}
 
@@ -760,6 +737,7 @@ static const NWidgetPart _nested_select_game_widgets[] = {
 
 	EndContainer(),
 
+	/* community support */
 	NWidget(WWT_CAPTION, COLOUR_BROWN, WID_SGI_CC_HEADER), SetDataTip(STR_NETWORK_SERVER_LIST_CC_HEADER, STR_CC_SERVERS_TOOLTIP),
 	NWidget(WWT_PANEL, COLOUR_BROWN),
 	NWidget(NWID_SPACER), SetMinimalSize(0, 3),
@@ -767,20 +745,20 @@ static const NWidgetPart _nested_select_game_widgets[] = {
 		NWidget(WWT_TEXT, COLOUR_ORANGE), SetMinimalSize(20, 12), SetDataTip(STR_CC_USER_TEXT, STR_NULL),
 		NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_SGI_CC_USER_ENTER), SetMinimalSize(15, 12), SetDataTip(STR_CC_USER_CHANGE, STR_CC_USER_CHANGE_TOOLTIP),
 		NWidget(NWID_SPACER), SetMinimalSize(3, 0),
-		NWidget(WWT_TEXT, COLOUR_ORANGE, WID_SGI_CC_USER), SetMinimalSize(160, 12), SetDataTip(STR_CC_USER_WHITE, STR_NULL),
-		NWidget(WWT_TEXT, COLOUR_ORANGE), SetMinimalSize(20, 12), SetDataTip(STR_CC_SEPARATOR1, STR_NULL),
+		NWidget(WWT_TEXT, COLOUR_ORANGE, WID_SGI_CC_USER), SetMinimalSize(120, 12), SetDataTip(STR_CC_USER_WHITE, STR_NULL),
+		//NWidget(WWT_TEXT, COLOUR_ORANGE), SetMinimalSize(20, 12), SetDataTip(STR_CC_SEPARATOR1, STR_NULL),
 		NWidget(WWT_TEXT, COLOUR_ORANGE), SetMinimalSize(20, 12), SetDataTip(STR_CC_PASSWORD, STR_NULL),
 		NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_SGI_CC_PASSWORD), SetMinimalSize(15, 12), SetDataTip(STR_CC_PASSWORD_CHANGE, STR_CC_PASSWORD_CHANGE_TOOLTIP),
-		NWidget(NWID_SPACER), SetMinimalSize(175, 0),
+		NWidget(NWID_SPACER), SetMinimalSize(235, 0),
 		NWidget(WWT_TEXT, COLOUR_ORANGE), SetMinimalSize(20, 12), SetDataTip(STR_CC_BUILD, STR_NULL),
-		NWidget(NWID_SPACER), SetMinimalSize(3, 0),
+		NWidget(NWID_SPACER), SetMinimalSize(5, 0),
 	EndContainer(),
 	NWidget(NWID_SPACER), SetMinimalSize(0, 6),
 	NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetFill(1, 0), SetPIP(5, 3, 0),
 		NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_WEBSITE), SetMinimalSize(55, 15), SetDataTip(STR_NETWORK_SERVER_LIST_JOIN_GAME_CC_WEBSITE, STR_NETWORK_SERVER_LIST_JOIN_GAME_CC_WEBSITE_TOOLTIP),
 		NWidget(WWT_TEXT, COLOUR_ORANGE), SetMinimalSize(10, 0), SetDataTip(STR_CC_SEPARATOR1, STR_NULL),
-			NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SGI_CC_SELECT_NICE), SetMinimalSize(235, 15), SetDataTip(STR_NETWORK_CC_SELECT_NICE, STR_NETWORK_CC_SELECT_NICE_TOOLTIP),
-			NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SGI_CC_SELECT_BTPRO), SetMinimalSize(235, 15), SetDataTip(STR_NETWORK_CC_SELECT_BTPRO, STR_NETWORK_CC_SELECT_BTPRO_TOOLTIP),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SGI_CC_SELECT_NICE), SetMinimalSize(245, 15), SetDataTip(STR_NETWORK_CC_SELECT_NICE, STR_NETWORK_CC_SELECT_NICE_TOOLTIP),
+			NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SGI_CC_SELECT_BTPRO), SetMinimalSize(245, 15), SetDataTip(STR_NETWORK_CC_SELECT_BTPRO, STR_NETWORK_CC_SELECT_BTPRO_TOOLTIP),
 			NWidget(NWID_SPACER), SetMinimalSize(5, 0),
 	EndContainer(),
 	NWidget(NWID_SPACER), SetMinimalSize(0, 4),
