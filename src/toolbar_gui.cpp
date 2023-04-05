@@ -1238,7 +1238,7 @@ static CallBackFunction MenuClickHelp(int index)
 		//case  1: citymania::ShowCommandsToolbar(); break;
         case 1 : break;
 		//case  2: citymania::ShowLoginWindow();     break;
-        case  2: ShowTokenLogin(); break;
+        case  2: if(_settings_client.gui.community != 0) ShowTokenLogin(); break;
 		case  3: IConsoleSwitch();                 break;
 		case  4: ShowAIDebugWindow();              break;
 		case  5: ShowScreenshotWindow();           break;
