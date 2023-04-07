@@ -1238,7 +1238,7 @@ static CallBackFunction MenuClickHelp(int index)
 		//case  1: citymania::ShowCommandsToolbar(); break;
         case 1 : break;
 		//case  2: citymania::ShowLoginWindow();     break;
-        case  2: if(_settings_client.gui.community != 0) ShowTokenLogin(); break;
+        case 2: if (_settings_client.gui.community != 0) ShowTokenLogin(); break;
 		case  3: IConsoleSwitch();                 break;
 		case  4: ShowAIDebugWindow();              break;
 		case  5: ShowScreenshotWindow();           break;
@@ -2180,7 +2180,8 @@ struct MainToolbarWindow : Window {
 			case CM_MTHK_CARGOTABLE: if(_current_company != COMPANY_SPECTATOR){ citymania::ShowCompanyCargos(_current_company); } break;
 			case CM_MTHK_TREES: if(_current_company != COMPANY_SPECTATOR){ BuildTreesWindow(); } break;
 			case CM_MTHK_ZONING: citymania::ShowZoningToolbar(); break;
-			case CM_MTHK_LOGINWINDOW: citymania::ShowLoginWindow(); break;
+			//case CM_MTHK_LOGINWINDOW: citymania::ShowLoginWindow(); break;
+            case CM_MTHK_LOGINWINDOW: if (_settings_client.gui.community != 0) ShowTokenLogin(); break;
 			case CM_MTHK_SETTINGS_ADV: ShowGameSettings(); break;
 			case CM_MTHK_NEWGRF: ShowNewGRFSettings(!_networking && _settings_client.gui.UserIsAllowedToChangeNewGRFs(), true, true, &_grfconfig); break;
 			case CM_MTHK_SMALLMAP_TOGGLE: citymania::ToggleSmallMap(); break;

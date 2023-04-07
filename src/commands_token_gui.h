@@ -6,7 +6,8 @@
 #include "window_gui.h"
 #include "company_base.h"
 
-//void LoginToken();
 void ShowTokenLogin();
+NWidgetBase *MakeServerButtons_User(int *biggest_index);
+bool GetServerInfo(int number, bool findonly);
 
 #endif

@@ -6125,7 +6125,7 @@ STR_CC_IRC_LINK_CHAT_TOOLTIP                                    :{BLACK}Open mib
 STR_CC_IRC_LINK_SERVERS                                         :{BLACK}IRC Servers
 STR_CC_IRC_LINK_SERVERS_SPACER                                  :{BLACK}{NBSP}{NBSP}
 STR_CC_IRC_LINK_SERVERS_TOOLTIP                                 :{BLACK}Open mibbit in browser to connect to #btpro-openttd IRC channel
-STR_CC_WIKI_RULES_PAGE                                          :{YELLOW}Detailed Rules
+STR_CC_WIKI_RULES_PAGE                                          :{BLACK}Detailed Rules
 STR_CC_WIKI_RULES_PAGE_STATUS                                   :{BLACK}Rules Wiki
 STR_CC_WIKI_RULES_PAGE_STATUS_TOOLTIP                           :{BLACK}Open Rules Wiki page in browser
 STR_CC_WIKI_RULES_PAGE_TOOLTIP                                  :{BLACK}Open browser in Rules Wiki page
