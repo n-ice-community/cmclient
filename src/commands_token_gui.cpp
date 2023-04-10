@@ -180,8 +180,9 @@ NWidgetBase *MakeServerButtons_User(int *biggest_index)
 	_server_list_text_names1 = _server_list_text;
 
 	if(_settings_client.gui.community == 0 || _server_list_text_names1.empty()){
-		NWidgetBackground *leaf = new NWidgetBackground(WWT_PANEL, COLOUR_GREY, CC_SERVERS, NULL);
-		ver->Add(leaf);
+        /* disabled due assertion failed */
+		//NWidgetBackground *leaf = new NWidgetBackground(WWT_PANEL, COLOUR_GREY, CC_SERVERS, NULL);
+		//ver->Add(leaf);
 		return ver;
 	}
 
