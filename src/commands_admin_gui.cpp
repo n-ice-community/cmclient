@@ -577,7 +577,7 @@ class CCCommand : public Window
 			case AC_LINKS_CC:
 				if (_networking) {
 					if (_settings_client.gui.community == 1) {
-						NetworkClientSendChat(NETWORK_ACTION_CHAT, DESTTYPE_BROADCAST, 0 , "http://www.n-ice.org/openttd");
+						NetworkClientSendChat(NETWORK_ACTION_CHAT, DESTTYPE_BROADCAST, 0 , "http://www.n-ice.org");
 					} else if (_settings_client.gui.community == 2) {
 						NetworkClientSendChat(NETWORK_ACTION_CHAT, DESTTYPE_BROADCAST, 0 , "http://openttd.btpro.nl");
 					}
@@ -608,23 +608,23 @@ class CCCommand : public Window
 				break;
 			case AC_LINKS_TUTORIAL:
 				if (_networking) {
-					NetworkClientSendChat(NETWORK_ACTION_CHAT, DESTTYPE_BROADCAST, 0 , "http://wiki.openttd.org/Tutorial");
+					NetworkClientSendChat(NETWORK_ACTION_CHAT, DESTTYPE_BROADCAST, 0 , "https://wiki.openttd.org/en/Manual/Tutorial/");
 				} else { ShowErrorMessage(STR_NETWORK_BT_AVAILABLE_NETWORK, INVALID_STRING_ID, WL_ERROR); }
 				break;
 			case AC_LINKS_MECHAACS:
 				if (_networking) {
-					NetworkClientSendChat(NETWORK_ACTION_CHAT, DESTTYPE_BROADCAST, 0 , "http://wiki.openttd.org/Game_MechaACs");
+					NetworkClientSendChat(NETWORK_ACTION_CHAT, DESTTYPE_BROADCAST, 0 , "https://wiki.openttd.org/en/Manual/Game%20Mechanics/");
 				} else { ShowErrorMessage(STR_NETWORK_BT_AVAILABLE_NETWORK, INVALID_STRING_ID, WL_ERROR); }
 				break;
 			case AC_LINKS_SIGNALS:
 				if (_networking) {
-					NetworkClientSendChat(NETWORK_ACTION_CHAT, DESTTYPE_BROADCAST, 0 , "http://wiki.openttd.org/Signals");
+					NetworkClientSendChat(NETWORK_ACTION_CHAT, DESTTYPE_BROADCAST, 0 , "https://wiki.openttd.org/en/Manual/Signals");
 				} else { ShowErrorMessage(STR_NETWORK_BT_AVAILABLE_NETWORK, INVALID_STRING_ID, WL_ERROR); }
 				break;
 			case AC_LINKS_GAME_LOGIN:
 				if (_networking) {
 					if (_settings_client.gui.community == 1) {
-						NetworkClientSendChat(NETWORK_ACTION_CHAT, DESTTYPE_BROADCAST, 0 , "http://www.n-ice.org/openttd  -  login at website and read instructions in 'Game Login' link");
+						NetworkClientSendChat(NETWORK_ACTION_CHAT, DESTTYPE_BROADCAST, 0 , "http://www.n-ice.org  -  login at website and read instructions in 'Game Login' link");
 					} else if (_settings_client.gui.community == 2) {
 						NetworkClientSendChat(NETWORK_ACTION_CHAT, DESTTYPE_BROADCAST, 0 , "http://openttd.btpro.nl  -  login at website and read instructions in 'Game Login' link");
 					}

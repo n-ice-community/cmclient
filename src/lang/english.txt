@@ -6062,7 +6062,7 @@ CM_STR_CONFIG_SETTING_TYPE_DROPDOWN_CITYMANIA                   :CityMania patch
 
 CM_BUILDING_PREVIEW_COST_ENOUGH                                 :Cost
 
-######## btpro/n-ice community support ########
+######## btpro/n-ice community support at intro_gui ########
 STR_NETWORK_CLIENT_LIST_GET_TOKEN                               :{LTBLUE}Token Login
 STR_NETWORK_CC_SELECT_NICE                                      :{BLACK}N-ICE
 STR_NETWORK_CC_SELECT_NICE_TOOLTIP                              :{BLACK}Select N-ICE servers
@@ -6087,10 +6087,19 @@ STR_CC_USER_ENTER                                               :{BLACK}Enter yo
 STR_CC_USER_CHANGE_TOOLTIP                                      :{BLACK}Enter acccount User name
 STR_CC_PASSWORD                                                 :{BLACK}Password:{NBSP}
 STR_CC_PASSWORD_ENTER                                           :{BLACK}Enter your account Password
+STR_CC_ADMIN_PASSWORD_ENTER                                     :{BLACK}Enter your ADMIN Password
+STR_CC_ADMIN_GOODBYE_ENTER                                      :{BLACK}ENTER the Goodbye Message
+STR_CC_ADMIN_ATTENTION_ENTER                                    :{BLACK}ENTER ATTENTION Message
 STR_CC_PASSWORD_CHANGE                                          :{BLACK}...
 STR_CC_PASSWORD_CHANGE_TOOLTIP                                  :{BLACK}Enter account Password
+STR_CC_ADMIN_GOODBYE                                            :{SILVER}Good bye!
+STR_CC_ADMIN_GOODBYE_CHANGE_TOOLTIP                             :{BLACK}Change the Goodbye Message
+STR_CC_ADMIN_ATTENTION                                          :{SILVER}Attention!
+STR_CC_ADMIN_ATTENTION_CHANGE_TOOLTIP                           :{BLACK}Change the Message to get Players ATTENTION/WARNING
+STR_CC_ADMIN_PASSWORD                                           :{RED}A
+STR_CC_ADMIN_PASSWORD_CHANGE                                    :{BLACK}Enter ADMIN Password
 
-STR_CC_GLOBAL_COMMANDS_TITLE                                    :{WHITE}Token Login tool
+STR_CC_GLOBAL_COMMANDS_TITLE                                    :{WHITE}Login and commands
 STR_CC_TOKEN_WELCOME                                            :{BLACK}Welcome back {WHITE}{RAW_STRING}{BLACK} :)
 STR_CC_TOKEN_CLICKME                                            :{BLACK}Click the big button to Login automatically
 STR_CC_TOKEN_ENJOY                                              :{BLACK}  Respect the rules and enjoy the game. :)
@@ -6194,9 +6203,9 @@ STR_CC_GLOBAL_VARIOUS_GOODBYE                                   :{RED}Good luck 
 STR_CC_OTHER_ADMIN                                              :{WHITE}Other Admin commands:
 STR_CC_OTHER_ADMIN_ACKNOWLEDGE                                  :{BLACK}Acknowledge
 STR_CC_OTHER_ADMIN_SOLVE                                        :{BLACK}Solve
-STR_CC_OTHER_TOKEN_LOGIN                                        :{BLUE}Token Login
+STR_CC_OTHER_TOKEN_LOGIN                                        :{BLACK}Login
 STR_CC_OTHER_TOKEN_LOGIN_TOOLTIP                                :{BLACK}Get Token from website and executes !login XXXX
-STR_CC_OTHER_TOKEN_LOGOUT                                       :{SILVER}!Logout
+STR_CC_OTHER_TOKEN_LOGOUT                                       :{BLACK}Logout
 STR_CC_OTHER_TOKEN_LOGOUT_TOOLTIP                               :{BLACK}Logout as player
 STR_CC_OTHER_ADMIN_LOGIN                                        :{BLACK}Admin Login
 STR_CC_OTHER_ADMIN_LOGOUT                                       :{BLACK}Admin Logout

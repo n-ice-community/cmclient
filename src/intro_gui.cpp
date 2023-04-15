@@ -280,9 +280,21 @@ struct SelectGameWindow : public Window {
 		switch (query_widget) {
 			case SGQ_CC_USER: {
 				if (Utf8StringLength(str) >= NETWORK_NAME_LENGTH) break;
-				if(comm > 0 && comm <= 2)_settings_client.network.community_user[comm-1] = str;
+				if(comm > 0 && comm <= 2) _settings_client.network.community_user[comm-1] = str;
 				SaveToConfig();
 				this->SetDirty();
+				break;
+			}
+			case SGQ_CC_ADMIN_GOODBYE: {
+				if (Utf8StringLength(str) >= NETWORK_NAME_LENGTH) break;
+				if(comm > 0 && comm <= 2) _settings_client.network.luck_goodbye = str;
+				SaveToConfig();
+				break;
+			}
+			case SGQ_CC_ADMIN_ATTENTION: {
+				if (Utf8StringLength(str) >= NETWORK_NAME_LENGTH) break;
+				if(comm > 0 && comm <= 2) (_settings_client.network.nice_attention = str);
+				SaveToConfig();
 				break;
 			}
 			case SGQ_CC_PASSWORD: {
@@ -310,6 +322,18 @@ struct SelectGameWindow : public Window {
                     np = encoded.c_str();
 					_settings_client.network.community_password[comm-1] = np;
                 }
+				SaveToConfig();
+				break;
+			}
+			case SGQ_CC_ADMIN_PASSWORD:{
+				if (Utf8StringLength(str) >= NETWORK_PASSWORD_LENGTH) break;
+				std::string s = str;
+				std::string encoded = base64_encode(reinterpret_cast<const unsigned char*>(s.c_str()), s.length());
+
+				if(comm > 0 && comm <= 2){
+					comm--; //array first index
+					_settings_client.network.community_admin_password[comm] = encoded;
+				}
 				SaveToConfig();
 				break;
 			}
@@ -347,6 +371,7 @@ struct SelectGameWindow : public Window {
 		else if(_settings_client.gui.community == 2) this->GetWidget<NWidgetCore>(WID_SGI_CC_SELECT_BTPRO)->colour = COLOUR_YELLOW;
 		else {
 			this->DisableWidget(WID_SGI_CC_PASSWORD);
+            this->DisableWidget(WID_SGI_CC_ADMIN_PASSWORD);
 			this->DisableWidget(WID_SGI_CC_USER_ENTER);
 			this->DisableWidget(WID_SGI_WEBSITE);
 			this->DisableWidget(WID_SGI_SERVERS_FORUM);
@@ -355,6 +380,8 @@ struct SelectGameWindow : public Window {
 			this->DisableWidget(WID_SGI_SERVER_RULES);
 			this->DisableWidget(WID_SGI_SERVER_WIKI);
 			this->DisableWidget(WID_SGI_SERVER_VIP);
+			this->DisableWidget(WID_SGI_CC_ADMIN_GOODBYE);
+			this->DisableWidget(WID_SGI_CC_ADMIN_ATTENTION);
 		}
 
 	}
@@ -539,6 +566,20 @@ struct SelectGameWindow : public Window {
 			case WID_SGI_CC_PASSWORD: // Enter user Password
 				this->query_widget = SGQ_CC_PASSWORD;
 				ShowQueryString(STR_EMPTY, STR_CC_PASSWORD_ENTER, 40, this, CS_ALPHANUMERAL, QSF_NONE);
+				break;
+			case WID_SGI_CC_ADMIN_PASSWORD: // Enter ADMIN Password
+				this->query_widget = SGQ_CC_ADMIN_PASSWORD;
+				ShowQueryString(STR_EMPTY, STR_CC_ADMIN_PASSWORD_ENTER, 40, this, CS_ALPHANUMERAL, QSF_NONE);
+				break;
+			case WID_SGI_CC_ADMIN_GOODBYE: // Enter Goodbye Message
+				this->query_widget = SGQ_CC_ADMIN_GOODBYE;
+				SetDParamStr(0, _settings_client.network.luck_goodbye);
+				ShowQueryString(STR_CC_USER_WHITE, STR_CC_ADMIN_GOODBYE_ENTER, 120, this, CS_ALPHANUMERAL, QSF_NONE);
+				break;
+			case WID_SGI_CC_ADMIN_ATTENTION: // Enter Warning Message
+				this->query_widget = SGQ_CC_ADMIN_ATTENTION;
+				SetDParamStr(0, _settings_client.network.nice_attention);
+				ShowQueryString(STR_CC_USER_WHITE, STR_CC_ADMIN_ATTENTION_ENTER, 80, this, CS_ALPHANUMERAL, QSF_NONE);
 				break;
             case WID_SGI_SERVERS:
 				break;
@@ -746,10 +787,9 @@ static const NWidgetPart _nested_select_game_widgets[] = {
 		NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_SGI_CC_USER_ENTER), SetMinimalSize(15, 12), SetDataTip(STR_CC_USER_CHANGE, STR_CC_USER_CHANGE_TOOLTIP),
 		NWidget(NWID_SPACER), SetMinimalSize(3, 0),
 		NWidget(WWT_TEXT, COLOUR_ORANGE, WID_SGI_CC_USER), SetMinimalSize(120, 12), SetDataTip(STR_CC_USER_WHITE, STR_NULL),
-		//NWidget(WWT_TEXT, COLOUR_ORANGE), SetMinimalSize(20, 12), SetDataTip(STR_CC_SEPARATOR1, STR_NULL),
 		NWidget(WWT_TEXT, COLOUR_ORANGE), SetMinimalSize(20, 12), SetDataTip(STR_CC_PASSWORD, STR_NULL),
 		NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_SGI_CC_PASSWORD), SetMinimalSize(15, 12), SetDataTip(STR_CC_PASSWORD_CHANGE, STR_CC_PASSWORD_CHANGE_TOOLTIP),
-		NWidget(NWID_SPACER), SetMinimalSize(235, 0),
+		NWidget(NWID_SPACER), SetMinimalSize(225, 0),
 		NWidget(WWT_TEXT, COLOUR_ORANGE), SetMinimalSize(20, 12), SetDataTip(STR_CC_BUILD, STR_NULL),
 		NWidget(NWID_SPACER), SetMinimalSize(5, 0),
 	EndContainer(),
@@ -757,9 +797,9 @@ static const NWidgetPart _nested_select_game_widgets[] = {
 	NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetFill(1, 0), SetPIP(5, 3, 0),
 		NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_WEBSITE), SetMinimalSize(55, 15), SetDataTip(STR_NETWORK_SERVER_LIST_JOIN_GAME_CC_WEBSITE, STR_NETWORK_SERVER_LIST_JOIN_GAME_CC_WEBSITE_TOOLTIP),
 		NWidget(WWT_TEXT, COLOUR_ORANGE), SetMinimalSize(10, 0), SetDataTip(STR_CC_SEPARATOR1, STR_NULL),
-			NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SGI_CC_SELECT_NICE), SetMinimalSize(245, 15), SetDataTip(STR_NETWORK_CC_SELECT_NICE, STR_NETWORK_CC_SELECT_NICE_TOOLTIP),
-			NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SGI_CC_SELECT_BTPRO), SetMinimalSize(245, 15), SetDataTip(STR_NETWORK_CC_SELECT_BTPRO, STR_NETWORK_CC_SELECT_BTPRO_TOOLTIP),
-			NWidget(NWID_SPACER), SetMinimalSize(5, 0),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SGI_CC_SELECT_NICE), SetMinimalSize(245, 15), SetDataTip(STR_NETWORK_CC_SELECT_NICE, STR_NETWORK_CC_SELECT_NICE_TOOLTIP),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SGI_CC_SELECT_BTPRO), SetMinimalSize(245, 15), SetDataTip(STR_NETWORK_CC_SELECT_BTPRO, STR_NETWORK_CC_SELECT_BTPRO_TOOLTIP),
+		NWidget(NWID_SPACER), SetMinimalSize(6, 0),
 	EndContainer(),
 	NWidget(NWID_SPACER), SetMinimalSize(0, 4),
 	NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
@@ -799,6 +839,190 @@ static const NWidgetPart _nested_select_game_widgets[] = {
 	NWidget(NWID_SPACER), SetMinimalSize(0, 6),
 };
 
+
+static const NWidgetPart _nested_select_game_widgets_2[] = {
+	NWidget(WWT_CAPTION, COLOUR_BROWN), SetDataTip(STR_INTRO_CAPTION, STR_NULL),
+	NWidget(WWT_PANEL, COLOUR_BROWN),
+	NWidget(NWID_SPACER), SetMinimalSize(0, 8),
+
+	/* 'New Game' and 'Load Game' buttons */
+	NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_GENERATE_GAME), SetMinimalSize(158, 12),
+							SetDataTip(STR_INTRO_NEW_GAME, STR_INTRO_TOOLTIP_NEW_GAME), SetPadding(0, 0, 0, 10), SetFill(1, 0),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_LOAD_GAME), SetMinimalSize(158, 12),
+							SetDataTip(STR_INTRO_LOAD_GAME, STR_INTRO_TOOLTIP_LOAD_GAME), SetPadding(0, 10, 0, 0), SetFill(1, 0),
+	EndContainer(),
+
+	NWidget(NWID_SPACER), SetMinimalSize(0, 6),
+
+	/* 'Play Scenario' and 'Play Heightmap' buttons */
+	NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_PLAY_SCENARIO), SetMinimalSize(158, 12),
+							SetDataTip(STR_INTRO_PLAY_SCENARIO, STR_INTRO_TOOLTIP_PLAY_SCENARIO), SetPadding(0, 0, 0, 10), SetFill(1, 0),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_PLAY_HEIGHTMAP), SetMinimalSize(158, 12),
+							SetDataTip(STR_INTRO_PLAY_HEIGHTMAP, STR_INTRO_TOOLTIP_PLAY_HEIGHTMAP), SetPadding(0, 10, 0, 0), SetFill(1, 0),
+	EndContainer(),
+
+	NWidget(NWID_SPACER), SetMinimalSize(0, 6),
+
+	/* 'Scenario Editor' and 'Multiplayer' buttons */
+	NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_EDIT_SCENARIO), SetMinimalSize(158, 12),
+							SetDataTip(STR_INTRO_SCENARIO_EDITOR, STR_INTRO_TOOLTIP_SCENARIO_EDITOR), SetPadding(0, 0, 0, 10), SetFill(1, 0),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_PLAY_NETWORK), SetMinimalSize(158, 12),
+							SetDataTip(STR_INTRO_MULTIPLAYER, STR_INTRO_TOOLTIP_MULTIPLAYER), SetPadding(0, 10, 0, 0), SetFill(1, 0),
+	EndContainer(),
+
+	NWidget(NWID_SPACER), SetMinimalSize(0, 7),
+
+	/* Climate selection buttons */
+	NWidget(NWID_HORIZONTAL),
+		NWidget(NWID_SPACER), SetMinimalSize(10, 0), SetFill(1, 0),
+		NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_SGI_TEMPERATE_LANDSCAPE), SetMinimalSize(77, 55),
+							SetDataTip(SPR_SELECT_TEMPERATE, STR_INTRO_TOOLTIP_TEMPERATE),
+		NWidget(NWID_SPACER), SetMinimalSize(3, 0), SetFill(1, 0),
+		NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_SGI_ARCTIC_LANDSCAPE), SetMinimalSize(77, 55),
+							SetDataTip(SPR_SELECT_SUB_ARCTIC, STR_INTRO_TOOLTIP_SUB_ARCTIC_LANDSCAPE),
+		NWidget(NWID_SPACER), SetMinimalSize(3, 0), SetFill(1, 0),
+		NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_SGI_TROPIC_LANDSCAPE), SetMinimalSize(77, 55),
+							SetDataTip(SPR_SELECT_SUB_TROPICAL, STR_INTRO_TOOLTIP_SUB_TROPICAL_LANDSCAPE),
+		NWidget(NWID_SPACER), SetMinimalSize(3, 0), SetFill(1, 0),
+		NWidget(WWT_IMGBTN_2, COLOUR_ORANGE, WID_SGI_TOYLAND_LANDSCAPE), SetMinimalSize(77, 55),
+							SetDataTip(SPR_SELECT_TOYLAND, STR_INTRO_TOOLTIP_TOYLAND_LANDSCAPE),
+		NWidget(NWID_SPACER), SetMinimalSize(10, 0), SetFill(1, 0),
+	EndContainer(),
+
+	NWidget(NWID_SPACER), SetMinimalSize(0, 7),
+	NWidget(NWID_SELECTION, INVALID_COLOUR, WID_SGI_BASESET_SELECTION),
+		NWidget(NWID_VERTICAL),
+			NWidget(WWT_EMPTY, COLOUR_ORANGE, WID_SGI_BASESET), SetMinimalSize(316, 12), SetFill(1, 0), SetPadding(0, 10, 7, 10),
+		EndContainer(),
+	EndContainer(),
+	NWidget(NWID_SELECTION, INVALID_COLOUR, WID_SGI_TRANSLATION_SELECTION),
+		NWidget(NWID_VERTICAL),
+			NWidget(WWT_EMPTY, COLOUR_ORANGE, WID_SGI_TRANSLATION), SetMinimalSize(316, 12), SetFill(1, 0), SetPadding(0, 10, 7, 10),
+		EndContainer(),
+	EndContainer(),
+
+	/* 'Game Options' and 'Settings' buttons */
+	NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_OPTIONS), SetMinimalSize(158, 12),
+							SetDataTip(STR_INTRO_GAME_OPTIONS, STR_INTRO_TOOLTIP_GAME_OPTIONS), SetPadding(0, 0, 0, 10), SetFill(1, 0),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_SETTINGS_OPTIONS), SetMinimalSize(158, 12),
+							SetDataTip(STR_INTRO_CONFIG_SETTINGS_TREE, STR_INTRO_TOOLTIP_CONFIG_SETTINGS_TREE), SetPadding(0, 10, 0, 0), SetFill(1, 0),
+	EndContainer(),
+
+	NWidget(NWID_SPACER), SetMinimalSize(0, 6),
+
+	/* 'AI Settings' and 'Game Script Settings' buttons */
+	NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_AI_SETTINGS), SetMinimalSize(158, 12),
+							SetDataTip(STR_INTRO_AI_SETTINGS, STR_INTRO_TOOLTIP_AI_SETTINGS), SetPadding(0, 0, 0, 10), SetFill(1, 0),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_GS_SETTINGS), SetMinimalSize(158, 12),
+							SetDataTip(STR_INTRO_GAMESCRIPT_SETTINGS, STR_INTRO_TOOLTIP_GAMESCRIPT_SETTINGS), SetPadding(0, 10, 0, 0), SetFill(1, 0),
+	EndContainer(),
+
+	NWidget(NWID_SPACER), SetMinimalSize(0, 6),
+
+	/* 'Check Online Content' and 'NewGRF Settings' buttons */
+	NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_CONTENT_DOWNLOAD), SetMinimalSize(158, 12),
+							SetDataTip(STR_INTRO_ONLINE_CONTENT, STR_INTRO_TOOLTIP_ONLINE_CONTENT), SetPadding(0, 0, 0, 10), SetFill(1, 0),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_GRF_SETTINGS), SetMinimalSize(158, 12),
+							SetDataTip(STR_INTRO_NEWGRF_SETTINGS, STR_INTRO_TOOLTIP_NEWGRF_SETTINGS), SetPadding(0, 10, 0, 0), SetFill(1, 0),
+	EndContainer(),
+
+	NWidget(NWID_SPACER), SetMinimalSize(0, 6),
+
+	/* 'Highscore Table' button */
+	NWidget(NWID_HORIZONTAL),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_HIGHSCORE), SetMinimalSize(316, 12),
+							SetDataTip(STR_INTRO_HIGHSCORE, STR_INTRO_TOOLTIP_HIGHSCORE), SetPadding(0, 10, 0, 10), SetFill(1, 0),
+	EndContainer(),
+
+	NWidget(NWID_SPACER), SetMinimalSize(0, 6),
+
+	/* 'Exit' button */
+	NWidget(NWID_HORIZONTAL),
+		NWidget(NWID_SPACER), SetFill(1, 0),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_EXIT), SetMinimalSize(128, 12),
+							SetDataTip(STR_INTRO_QUIT, STR_INTRO_TOOLTIP_QUIT),
+		NWidget(NWID_SPACER), SetFill(1, 0),
+	EndContainer(),
+
+	NWidget(NWID_SPACER), SetMinimalSize(0, 8),
+
+	EndContainer(),
+
+	/* community support */
+	NWidget(WWT_CAPTION, COLOUR_BROWN, WID_SGI_CC_HEADER), SetDataTip(STR_NETWORK_SERVER_LIST_CC_HEADER, STR_CC_SERVERS_TOOLTIP),
+	NWidget(WWT_PANEL, COLOUR_BROWN),
+	NWidget(NWID_SPACER), SetMinimalSize(0, 3),
+	NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetFill(1, 0), SetPIP(5, 3, 0),
+		NWidget(WWT_TEXT, COLOUR_ORANGE), SetMinimalSize(20, 12), SetDataTip(STR_CC_USER_TEXT, STR_NULL),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_SGI_CC_USER_ENTER), SetMinimalSize(15, 12), SetDataTip(STR_CC_USER_CHANGE, STR_CC_USER_CHANGE_TOOLTIP),
+		NWidget(NWID_SPACER), SetMinimalSize(3, 0),
+		NWidget(WWT_TEXT, COLOUR_ORANGE, WID_SGI_CC_USER), SetMinimalSize(120, 12), SetDataTip(STR_CC_USER_WHITE, STR_NULL),
+		NWidget(WWT_TEXT, COLOUR_ORANGE), SetMinimalSize(20, 12), SetDataTip(STR_CC_PASSWORD, STR_NULL),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_SGI_CC_PASSWORD), SetMinimalSize(15, 12), SetDataTip(STR_CC_PASSWORD_CHANGE, STR_CC_PASSWORD_CHANGE_TOOLTIP),
+		NWidget(NWID_SPACER), SetMinimalSize(3, 0),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_SGI_CC_ADMIN_PASSWORD), SetMinimalSize(20, 12), SetDataTip(STR_CC_ADMIN_PASSWORD, STR_CC_ADMIN_PASSWORD_CHANGE),
+		NWidget(NWID_SPACER), SetMinimalSize(30, 0),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_SGI_CC_ADMIN_GOODBYE), SetMinimalSize(70, 12), SetDataTip(STR_CC_ADMIN_GOODBYE, STR_CC_ADMIN_GOODBYE_CHANGE_TOOLTIP),
+		NWidget(NWID_SPACER), SetMinimalSize(3, 0),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_BROWN, WID_SGI_CC_ADMIN_ATTENTION), SetMinimalSize(70, 12), SetDataTip(STR_CC_ADMIN_ATTENTION, STR_CC_ADMIN_ATTENTION_CHANGE_TOOLTIP),
+		NWidget(NWID_SPACER), SetMinimalSize(3, 0),
+		NWidget(WWT_TEXT, COLOUR_ORANGE), SetMinimalSize(20, 12), SetDataTip(STR_CC_BUILD, STR_NULL),
+		NWidget(NWID_SPACER), SetMinimalSize(3, 0),
+	EndContainer(),
+	NWidget(NWID_SPACER), SetMinimalSize(0, 6),
+	NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetFill(1, 0), SetPIP(5, 3, 0),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_WEBSITE), SetMinimalSize(55, 15), SetDataTip(STR_NETWORK_SERVER_LIST_JOIN_GAME_CC_WEBSITE, STR_NETWORK_SERVER_LIST_JOIN_GAME_CC_WEBSITE_TOOLTIP),
+		NWidget(WWT_TEXT, COLOUR_ORANGE), SetMinimalSize(10, 0), SetDataTip(STR_CC_SEPARATOR1, STR_NULL),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SGI_CC_SELECT_NICE), SetMinimalSize(240, 15), SetDataTip(STR_NETWORK_CC_SELECT_NICE, STR_NETWORK_CC_SELECT_NICE_TOOLTIP),
+		NWidget(WWT_PUSHTXTBTN, COLOUR_GREY, WID_SGI_CC_SELECT_BTPRO), SetMinimalSize(240, 15), SetDataTip(STR_NETWORK_CC_SELECT_BTPRO, STR_NETWORK_CC_SELECT_BTPRO_TOOLTIP),
+		NWidget(NWID_SPACER), SetMinimalSize(6, 0),
+	EndContainer(),
+	NWidget(NWID_SPACER), SetMinimalSize(0, 4),
+	NWidget(NWID_HORIZONTAL, NC_EQUALSIZE),
+		NWidget(NWID_VERTICAL, NC_EQUALSIZE), SetFill(1, 0),
+			NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetFill(1, 0), SetPIP(5, 3, 0),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_SERVERS_FORUM), SetMinimalSize(55, 15), SetDataTip(STR_NETWORK_SERVER_LIST_JOIN_GAME_CC_SERVERS, STR_NETWORK_SERVER_LIST_JOIN_GAME_CC_SERVERS_TOOLTIP),
+				NWidget(WWT_TEXT, COLOUR_ORANGE), SetMinimalSize(10, 0), SetDataTip(STR_CC_SEPARATOR1, STR_NULL),
+			EndContainer(),
+			NWidget(NWID_SPACER), SetMinimalSize(0, 4),
+			NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetFill(1, 0), SetPIP(5, 3, 0),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_IRC_CHAT), SetMinimalSize(55, 15), SetDataTip(STR_NETWORK_SERVER_LIST_JOIN_GAME_IRC_CHAT, STR_NETWORK_SERVER_LIST_JOIN_GAME_IRC_CHAT_TOOLTIP),
+				NWidget(WWT_TEXT, COLOUR_ORANGE), SetMinimalSize(10, 0), SetDataTip(STR_CC_SEPARATOR1, STR_NULL),
+			EndContainer(),
+			NWidget(NWID_SPACER), SetMinimalSize(0, 4),
+			NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetFill(1, 0), SetPIP(5, 3, 0),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_IRC_SERVERS_CHAT), SetMinimalSize(55, 15), SetDataTip(STR_NETWORK_SERVER_LIST_JOIN_GAME_IRC_SERVERS_CHAT, STR_NETWORK_SERVER_LIST_JOIN_GAME_IRC_SERVERS_CHAT_TOOLTIP),
+				NWidget(WWT_TEXT, COLOUR_ORANGE), SetMinimalSize(10, 0), SetDataTip(STR_CC_SEPARATOR1, STR_NULL),
+			EndContainer(),
+			NWidget(NWID_SPACER), SetMinimalSize(0, 4),
+			NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetFill(1, 0), SetPIP(5, 3, 0),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_SERVER_RULES), SetMinimalSize(55, 15), SetDataTip(STR_NETWORK_SERVER_LIST_JOIN_GAME_SERVER_RULES, STR_NETWORK_SERVER_LIST_JOIN_GAME_SERVER_RULES_TOOLTIP),
+				NWidget(WWT_TEXT, COLOUR_ORANGE), SetMinimalSize(10, 0), SetDataTip(STR_CC_SEPARATOR1, STR_NULL),
+			EndContainer(),
+			NWidget(NWID_SPACER), SetMinimalSize(0, 4),
+			NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetFill(1, 0), SetPIP(5, 3, 0),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_SERVER_WIKI), SetMinimalSize(55, 15), SetDataTip(STR_NETWORK_SERVER_LIST_JOIN_GAME_SERVER_WIKI, STR_NETWORK_SERVER_LIST_JOIN_GAME_SERVER_WIKI_TOOLTIP),
+				NWidget(WWT_TEXT, COLOUR_ORANGE), SetMinimalSize(10, 0), SetDataTip(STR_CC_SEPARATOR1, STR_NULL),
+			EndContainer(),
+			NWidget(NWID_SPACER), SetMinimalSize(0, 4),
+			NWidget(NWID_HORIZONTAL, NC_EQUALSIZE), SetFill(1, 0), SetPIP(5, 3, 0),
+				NWidget(WWT_PUSHTXTBTN, COLOUR_ORANGE, WID_SGI_SERVER_VIP), SetMinimalSize(55, 15), SetDataTip(STR_NETWORK_SERVER_LIST_JOIN_GAME_SERVER_VIP, STR_NETWORK_SERVER_LIST_JOIN_GAME_SERVER_VIP_TOOLTIP),
+				NWidget(WWT_TEXT, COLOUR_ORANGE), SetMinimalSize(10, 0), SetDataTip(STR_CC_SEPARATOR1, STR_NULL),
+			EndContainer(),
+		EndContainer(),
+		NWidgetFunction(MakeServerButtons),
+	EndContainer(),
+	NWidget(NWID_SPACER), SetMinimalSize(0, 6),
+};
+
+
+
 static WindowDesc _select_game_desc(
 	WDP_CENTER, nullptr, 0, 0,
 	WC_SELECT_GAME, WC_NONE,
@@ -806,9 +1030,22 @@ static WindowDesc _select_game_desc(
 	_nested_select_game_widgets, lengthof(_nested_select_game_widgets)
 );
 
+/* admin menue */
+static WindowDesc _select_game_desc_2(
+	WDP_CENTER, nullptr, 0, 0,
+	WC_SELECT_GAME, WC_NONE,
+	0,
+	_nested_select_game_widgets_2, lengthof(_nested_select_game_widgets_2)
+);
+
+
 void ShowSelectGameWindow()
 {
-	new SelectGameWindow(&_select_game_desc);
+	//new SelectGameWindow(&_select_game_desc);
+
+	/* switch intro menue */
+	if (_settings_client.gui.admin_mode == true) new SelectGameWindow(&_select_game_desc_2);
+    else new SelectGameWindow(&_select_game_desc);
 }
 
 static void AskExitGameCallback(Window *w, bool confirmed)

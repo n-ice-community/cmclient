@@ -34,6 +34,7 @@ enum SelectGameIntroWidgets {
 	WID_SGI_AI_SETTINGS,           ///< AI button.
 	WID_SGI_GS_SETTINGS,           ///< Game Script button.
 	WID_SGI_EXIT,                  ///< Exit button.
+
 	WID_SGI_CC_HEADER,
 
 	WID_SGI_SERVERS_FORUM,
@@ -47,6 +48,9 @@ enum SelectGameIntroWidgets {
 	WID_SGI_CC_USER,
 	WID_SGI_CC_USER_ENTER,
 	WID_SGI_CC_PASSWORD,
+    WID_SGI_CC_ADMIN_PASSWORD,
+    WID_SGI_CC_ADMIN_GOODBYE,
+    WID_SGI_CC_ADMIN_ATTENTION,
 	WID_SGI_CC_SELECT_NICE,
 	WID_SGI_CC_SELECT_BTPRO,
 	WID_SGI_CC_SERVERS,
@@ -82,6 +86,9 @@ enum SelectGameIntroWidgets {
 enum SelectGameQuery {
 	SGQ_CC_USER,
 	SGQ_CC_PASSWORD,
+    SGQ_CC_ADMIN_PASSWORD,
+    SGQ_CC_ADMIN_GOODBYE,
+    SGQ_CC_ADMIN_ATTENTION,
 };
 
 #endif /* WIDGETS_INTRO_WIDGET_H */
