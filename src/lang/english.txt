@@ -6062,7 +6062,7 @@ CM_STR_CONFIG_SETTING_TYPE_DROPDOWN_CITYMANIA                   :CityMania patch
 
 CM_BUILDING_PREVIEW_COST_ENOUGH                                 :Cost
 
-######## community ########
+######## btpro/n-ice community support ########
 STR_NETWORK_CLIENT_LIST_GET_TOKEN                               :{LTBLUE}Token Login
 STR_NETWORK_CC_SELECT_NICE                                      :{BLACK}N-ICE
 STR_NETWORK_CC_SELECT_NICE_TOOLTIP                              :{BLACK}Select N-ICE servers
@@ -6157,3 +6157,159 @@ STR_CC_OTHER_TOKEN_SOCKET_ERROR                                 :{WHITE}socket()
 STR_CC_OTHER_TOKEN_CONNECT_ERROR                                :{WHITE}connect() failed
 STR_CC_OTHER_TOKEN_SENT_ERROR                                   :{WHITE}send() sent a different number of bytes than expected
 STR_CC_OTHER_TOKEN_LOGIN_ERROR                                  :{WHITE}Wrong Username or Password!
+
+###### for commands_admin_gui
+STR_NETWORK_BT_AVAILABLE_NETWORK                                :{WHITE}Not to be used in Single Player mode
+STR_CC_NICE_USER_TEXT                                           :{BLACK}n-ice User:
+STR_CC_BTPRO_USER_TEXT                                          :{BLACK}BTPro User:
+STR_CC_NICE_USER_WHITE                                          :{WHITE}{RAW_STRING}
+STR_CC_BTPRO_USER_WHITE                                         :{WHITE}{RAW_STRING}
+STR_CC_OTHER_SELECTED_TILE                                      :{WHITE}Selected Tile
+STR_CC_GLOBAL_RULES                                             :{WHITE}Display rule(s):
+STR_CC_GLOBAL_RULES_STRING                                      :{BLACK}{RAW_STRING}
+STR_CC_GLOBAL_RULES_STRING_TOOLTIP                              :{BLACK}Show this rule to players
+STR_CC_GLOBAL_RULES_ALL                                         :{BLACK}SHOW ALL
+STR_CC_GLOBAL_RULES_RESERVED                                    :{BLACK}...
+STR_CC_GLOBAL_RULES_WEBSITE                                     :{CREAM}Abv. Rules
+STR_CC_GLOBAL_RULES_WEBSITE_TOOLTIP                             :{BLACK}Open Abbreviated rules webpage in browser
+STR_CC_GLOBAL_RULES_WEBSITE_DETAILED                            :{CREAM}Det. Rules
+STR_CC_GLOBAL_RULES_WEBSITE_DETAILED_TOOLTIP                    :{BLACK}Open Detailed rules webpage in browser
+STR_CC_GLOBAL_LINKS                                             :{WHITE}Display usefull links:
+STR_CC_GLOBAL_LINKS_CC                                          :{BLACK}Website
+STR_CC_GLOBAL_LINKS_CC_TTD                                      :{BLACK}Forum
+STR_CC_GLOBAL_LINKS_TTDWIKI                                     :{BLACK}TTD Wiki
+STR_CC_GLOBAL_LINKS_CCWIKI                                      :{BLACK}Server Wiki
+STR_CC_GLOBAL_LINKS_TUTORIAL                                    :{BLACK}Tutorial
+STR_CC_GLOBAL_LINKS_MECHANICS                                   :{BLACK}Mechanics
+STR_CC_GLOBAL_LINKS_SIGNALS                                     :{BLACK}Signals
+STR_CC_GLOBAL_LINKS_GAME_LOGIN                                  :{BLACK}Login FAQ
+STR_CC_GLOBAL_VARIOUS                                           :{WHITE}Various commands/triggers:
+STR_CC_GLOBAL_VARIOUS_SERVER                                    :{BLACK}Server
+STR_CC_GLOBAL_VARIOUS_INFO                                      :{BLACK}Info
+STR_CC_GLOBAL_VARIOUS_VOTE_RESTART                              :{BLACK}Vote Restart
+STR_CC_GLOBAL_VARIOUS_VOTE_RESTART_MAP                          :{BLACK}Vote Restart Map
+STR_CC_GLOBAL_VARIOUS_VOTE                                      :{BLACK}Vote
+STR_CC_GLOBAL_VARIOUS_VOTE_STATUS                               :{BLACK}Vote Status
+STR_CC_GLOBAL_VARIOUS_GOODBYE                                   :{RED}Good luck and Goodbye
+STR_CC_OTHER_ADMIN                                              :{WHITE}Other Admin commands:
+STR_CC_OTHER_ADMIN_ACKNOWLEDGE                                  :{BLACK}Acknowledge
+STR_CC_OTHER_ADMIN_SOLVE                                        :{BLACK}Solve
+STR_CC_OTHER_TOKEN_LOGIN                                        :{BLUE}Token Login
+STR_CC_OTHER_TOKEN_LOGIN_TOOLTIP                                :{BLACK}Get Token from website and executes !login XXXX
+STR_CC_OTHER_TOKEN_LOGOUT                                       :{SILVER}!Logout
+STR_CC_OTHER_TOKEN_LOGOUT_TOOLTIP                               :{BLACK}Logout as player
+STR_CC_OTHER_ADMIN_LOGIN                                        :{BLACK}Admin Login
+STR_CC_OTHER_ADMIN_LOGOUT                                       :{BLACK}Admin Logout
+STR_CC_SERVER_TEXT                                              :{BLACK}Server:
+STR_CC_SERVER_TEXT_SERVER                                       :{WHITE}{RAW_STRING}
+STR_CC_SERVER_NICE_USER                                         :{WHITE}{RAW_STRING}
+STR_CC_SERVER_BTPRO_USER                                        :{WHITE}{RAW_STRING}
+STR_NETWORK_SERVER_LIST_JOIN_GAME_CC                            :{BLACK}# Community # servers:
+STR_NETWORK_SERVER_LIST_JOIN_GAME_CC_WHITE                      :{WHITE}# Community # servers:
+STR_NETWORK_SERVER_LIST_ERROR_FILE                              :{BLACK}File error
+STR_NETWORK_SERVER_LIST_ERROR_MEMORY                            :{BLACK}Memory error
+STR_NETWORK_SERVER_LIST_ERROR_READING                           :{BLACK}Reading error
+
+######## Admin Commands/Buttons
+STR_WATCH_WINDOW_TITLE                                          :{WHITE}{RAW_STRING} in {RAW_STRING}({NUM}).
+STR_WATCH_WINDOW_TITLE2                                         :{WHITE}Watching {RAW_STRING} {BLACK}({NUM}).
+STR_WATCH_CLICK_TO_WATCH_COMPANY_NUMBER                         :{BLACK}{NUM}
+STR_WATCH_CLICK_TO_WATCH_COMPANY                                :{BLACK}Click here to watch this company building
+STR_WATCH_CLICK_TO_OPEN_COMPANY                                 :{BLACK}Click here to open this company window
+STR_WATCH_CLICK_NEW_WINDOW                                      :{BLACK}Click here to open new watching window
+STR_XI_COMPANY_ADMIN_CAPTION                                    :{WHITE}Admin Buttons
+STR_XI_KICK                                                     :{BLACK}Kick
+STR_XI_KICK_TOOLTIP                                             :{BLACK}Kick player out of the game.
+STR_XI_KICKC                                                    :{BLACK}Kick f Comp
+STR_XI_KICKC_TOOLTIP                                            :{BLACK}Kick player from company, send him to Spectators.
+STR_XI_RESET_KICK                                               :{BLACK}Reset Kick
+STR_XI_RESET_KICK_TOOLTIP                                       :{BLACK}Reset company and Kick out of the game player(s) on it.
+STR_XI_RESET_SPEC                                               :{BLACK}Reset Spec
+STR_XI_RESET_SPEC_TOOLTIP                                       :{BLACK}Reset company and send player(s) to spectators.
+STR_XI_RESET_TIMER5                                             :{BLACK}Reset T. 5m
+STR_XI_RESET_TIMER5_TOOLTIP                                     :{BLACK}Starts a timer to reset company when after 5 minutes countdown.
+STR_XI_RESET_TIMER                                              :{BLACK}Reset T....
+STR_XI_RESET_TIMER_TOOLTIP                                      :{BLACK}Starts a timer to reset company when time expire (time is Admin input).
+STR_XI_RESET_TIMER_VALUE                                        :{BLACK}Time to Reset (seconds):
+STR_XI_RESET_TIMER_CANCEL                                       :{BLACK}Cancel Reset
+STR_XI_RESET_TIMER_CANCEL_TOOLTIP                               :{BLACK}Cancel the Reset timer.
+STR_XI_EMPTY                                                    :{BLACK}Empty Comp
+STR_XI_EMPTY_TOOLTIP                                            :{BLACK}Send players in company to Spectators.
+STR_XI_JOIN                                                     :{BLACK}Join
+STR_XI_JOIN_TOOLTIP                                             :{BLACK}Join this company as Admin
+STR_XI_JOIN2                                                    :{BLACK}A. Join
+STR_XI_JOIN2_TOOLTIP                                            :{BLACK}Join this company as Admin
+STR_XI_RESET                                                    :{BLACK}Reset Comp
+STR_XI_RESET_TOOLTIP                                            :{BLACK}Reset the company. The company must be empty.
+STR_XI_RESET_COMP							                    :{BLACK}RESET Company
+STR_XI_RESET_KNOWN                                              :{BLACK}Reset Known
+STR_XI_RESET_KNOWN_TOOLTIP                                      :{BLACK}Reset Known
+STR_XI_RESET_COMP_SURE                                          :{WHITE}Sure to RESET this company?
+STR_XI_RESET_SPEC_SURE                                          :{WHITE}Sure to RESET this company, send players to SPECTATORS?
+STR_XI_RESET_KICK_SURE                                          :{WHITE}Sure to RESET this company, and KICK players on it?
+
+STR_XI_CLIENTS                                                  :{YELLOW}  Clients
+STR_XI_WATCH                                                    :Watch
+STR_XI_PLAYERS                                                  :{BLACK}List Players
+STR_XI_COMPANIES                                                :{BLACK}List Companies
+STR_XI_ENABLE                                                   :{BLACK}En/Dis
+STR_XI_ENABLE_TOOLTIP                                           :{BLACK}Enable or Disable the Admin commands
+STR_XI_ENABLE_SHOW                                              :{RED}Enable >>
+STR_XI_ENABLE_SHOW_TOOLTIP                                      :{BLACK}Enable the Admin commands
+STR_XI_ENABLE_HIDE                                              :{GREEN}<< Hide
+STR_XI_ENABLE_HIDE_TOOLTIP                                      :{BLACK}Disable (Hide) the Admin commands
+STR_XI_KNOWN                                                    :{BLACK}.:Known:.
+STR_XI_KNOWN_TOOLTIP                                            :{BLACK}Shows the Known Players in the company.
+STR_XI_TOWNSTATS                                                :{BLACK}Town Stats
+STR_XI_TOWNSTATS_TOOLTIP                                        :{BLACK}Shows the Town Statistics of this company (only on CB).
+STR_XI_LOCK                                                     :{BLACK}Lock Comp
+STR_XI_LOCK_TOOLTIP                                             :{BLACK}Lock Company. All players on it will be sent to spectators. Need to be Unlocked later to players be able to join again.
+STR_XI_UNLOCK                                                   :{BLACK}Unlock Comp
+STR_XI_UNLOCK_TOOLTIP                                           :{BLACK}Unlock Company making possible player(s) joining it again.
+STR_XI_SUSPEND                                                  :{BLACK}Suspend
+STR_XI_SUSPEND_TOOLTIP                                          :{BLACK}Suspend Company actions keeping player in the company.
+STR_XI_UNSUSPEND                                                :{BLACK}Unsuspend
+STR_XI_UNSUSPEND_TOOLTIP                                        :{BLACK}Unsuspend Company actions.
+STR_XI_AWARNING                                                 :{BLACK}A-Warning
+STR_XI_AWARNING_TOOLTIP                                         :{BLACK}Sends a Warning to company that an admin is trying to contact.
+STR_XI_COMPANYW                                                 :{BLACK}Company Window
+STR_XI_COMPANYW_TOOLTIP                                         :{BLACK}Open this player's Company Window
+STR_XI_NOTE_PLAYER                                              :{BLACK}.:Add Note:.
+STR_XI_NOTE_PLAYER_TOOLTIP                                      :{BLACK}Add a short Note about player behaviour / violation of the rules.
+STR_XI_NOTE_PLAYER_TITLE                                        :{BLACK}Short Note about rules violation:
+STR_XI_SHOW_NOTES                                               :{BLACK}Show Notes
+STR_XI_SHOW_NOTES_TOOLTIP                                       :{BLACK}Show existing Notes of a Player/ID/IP/Account
+STR_XI_SHOW_NOTES_TITLE                                         :{BLACK}Parameter to filter Notes (Player/ID/IP/Account)
+STR_XI_PLAYER_ATTENTION                                         :{BLACK}.:Attention:.
+STR_XI_PLAYER_ATTENTION_TOOLTIP                                 :{BLACK}Asks for player attention, with "Player, are you here?"
+STR_XI_MOVE_PLAYER_TO_TITLE                                     :{BLACK}Move player to company number:
+STR_XI_MOVE_PLAYER_TO                                           :{BLACK}Move to ...
+STR_XI_MOVE_PLAYER_TO_TOOLTIP                                   :{BLACK}Move a player (number #.. or name) to company
+STR_XI_SCROLL_TO_COORDS_TITLE                                   :{BLACK}Scroll to Coordinates ( {RED}X {BLACK}<space> {RED}Y {BLACK} or HEX)
+STR_XI_SCROLL_TO_COORDS                                         :{BLACK}Go to Coord ...
+STR_XI_SCROLL_TO_COORDS_TOOLTIP                                 :{BLACK}Scroll to Map coordinates specified by Admin
+STR_XI_PUBLIC_PLAYER_MESSAGE                                    :{BLACK}.{RED}P{BLACK}.
+STR_XI_PUBLIC_PLAYER_MESSAGE_TOOLTIP                            :{BLACK}Send a Custom public message to this player (includes player name, company name & colour)
+STR_XI_PUBLIC_PLAYER_MESSAGE_TITLE                              :{BLACK}Type Custom message to this Player (Public)
+STR_XI_PUBLIC_COMPANY_MESSAGE                                   :{BLACK}.{RED}C{BLACK}.
+STR_XI_PUBLIC_COMPANY_MESSAGE_TOOLTIP                           :{BLACK}Send a Custom public message to this player (includes company name & colour)
+STR_XI_PUBLIC_COMPANY_MESSAGE_TITLE                             :{BLACK}Type Custom message to this Company (Public)
+STR_XI_PRIVATE_PLAYER_MESSAGE                                   :{BLACK}.{GREEN}p{BLACK}.
+STR_XI_PRIVATE_PLAYER_MESSAGE_TOOLTIP                           :{BLACK}Send a Custom private message to this player
+STR_XI_PRIVATE_PLAYER_MESSAGE_TITLE                             :{BLACK}Type Custom message to this Player (private)
+STR_XI_PRIVATE_COMPANY_MESSAGE                                  :{BLACK}.{GREEN}c{BLACK}.
+STR_XI_PRIVATE_COMPANY_MESSAGE_TOOLTIP                          :{BLACK}Send a Custom private message to this company
+STR_XI_PRIVATE_COMPANY_MESSAGE_TITLE                            :{BLACK}Type Custom message to this Company (private)
+
+STR_XI_PLAYER_NEWSTICKET_BUTTON                                 :{BLACK}News (Player)
+STR_XI_PLAYER_NEWSTICKET_BUTTON_TOOLTIP                         :{BLACK}Open a Newspapper message directed to Player
+STR_XI_COMPANY_NEWSTICKET_BUTTON                                :{BLACK}News (Comp.)
+STR_XI_COMPANY_NEWSTICKET_BUTTON_TOOLTIP                        :{BLACK}Open a Newspapper message directed to Company
+STR_XI_COMPANY_NEWSTICKET_BUTTON_COMP                           :{BLACK}News (P. C.)
+STR_XI_COMPANY_NEWSTICKET_BUTTON_COMP_TOOLTIP                   :{BLACK}Open a Newspapper message only showed to Company
+STR_XI_GLOBAL_NEWSTICKET_BUTTON                                 :{BLACK}News (Global)
+STR_XI_GLOBAL_NEWSTICKET_BUTTON_TOOLTIP                         :{BLACK}Open a Newspapper message directed to All (Global)
+STR_XI_PLAYER_NEWSTICKET                                        :{BLACK}Type message as newspapper ticket to this Player
+STR_XI_COMPANY_NEWSTICKET                                       :{BLACK}Type message as newspapper ticket to this Company
+STR_XI_COMPANY_NEWSTICKET_COMP                                  :{BLACK}Type message as newspapper ticket ONLY to this Company
+STR_XI_GLOBAL_NEWSTICKET                                        :{BLACK}Type message as newspapper ticket to All (Global)

@@ -41,8 +41,10 @@
 
 #include "../safeguards.h"
 
+/* btpro/n-ice community support */
 #include "core/game_info.h"
 #include "../commands_token_gui.h"
+#include "../commands_admin_gui.h"
 
 /* This file handles all the client-commands */
 
@@ -1167,8 +1169,10 @@ NetworkRecvStatus ClientNetworkGameSocketHandler::Receive_SERVER_CONFIG_UPDATE(P
 		_settings_client.gui.community = 0;
 	}
 
-	if(_settings_client.gui.community != 0) ShowTokenLogin();
-
+	if (_settings_client.gui.community != 0) {
+		if (_settings_client.gui.admin_mode == true) ShowAdminCommands();
+		else ShowTokenLogin();
+    }
 
 	return NETWORK_RECV_STATUS_OKAY;
 }

@@ -84,6 +84,8 @@ add_files(
     clear_cmd.cpp
     clear_func.h
     clear_map.h
+    commands_admin_gui.cpp
+    commands_admin_gui.h
     commands_token_gui.cpp
     commands_token_gui.h
     command.cpp

@@ -233,8 +233,9 @@ struct GUISettings {
 	bool cm_show_client_overlay;
 	bool cm_enable_polyrail_terraform;
 
-	uint8 community;  ///< chosen community nice=0, btpro=1
-    uint32 btpro_version;
+	uint8	community;						///< chosen community nice=0, btpro=1
+    uint32	btpro_version;					///< check version
+    bool admin_mode;       ///< enable admin mode
 
 	/**
 	 * Returns true when the user has sufficient privileges to edit newgrfs on a running game
@@ -345,6 +346,9 @@ struct NetworkSettings {
 	UseRelayService use_relay_service;                        ///< Use relay service?
     std::string community_user[2];						  ///< webpage user to retrieve Token
     std::string community_password[2];					  ///< webpage password to retrieve Token
+	std::string luck_goodbye;                             ///< Message to say Good luck and Goodbye
+	std::string nice_attention;                           ///< Message to get players Attention
+	std::string community_admin_password[2];              ///< admin password to retrieve Admin Login
 };
 
 /** Settings related to the creation of games. */
