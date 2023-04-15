@@ -26,6 +26,11 @@ enum CompanyWidgets {
 	WID_C_DESC_INFRASTRUCTURE,        ///< Infrastructure.
 	WID_C_DESC_INFRASTRUCTURE_COUNTS, ///< Infrastructure count.
 
+	WID_C_DESC_TRAIN_LIST,			  ///< Open Train list of this company.
+    WID_C_DESC_BUSES_LIST,			  ///< Open RV's list of this company.
+    WID_C_DESC_SHIPS_LIST,			  ///< Open Ship list of this company.
+    WID_C_DESC_PLANE_LIST,			  ///< Open Planes list of this company.
+
 	WID_C_SELECT_DESC_OWNERS,         ///< Owners.
 	WID_C_DESC_OWNERS,                ///< Owner in Owners.
 
@@ -53,6 +58,11 @@ enum CompanyWidgets {
 	WID_C_SELECT_MULTIPLAYER,         ///< Multiplayer selection panel.
 	WID_C_COMPANY_PASSWORD,           ///< Button to set company password.
 	WID_C_COMPANY_JOIN,               ///< Button to join company.
+
+	WID_C_COMPANY_JOIN2,
+    WID_C_COMPANY_KNOWN,
+    WID_C_COMPANY_TOWNSTATS,
+    WID_C_COMPANY_ADMIN,
 
 	WID_C_SELECT_MOD,
 	WID_C_SELECT_MOD_JOIN,
@@ -201,6 +211,35 @@ enum BuyCompanyWidgets {
 	WID_BC_QUESTION, ///< Question text.
 	WID_BC_NO,       ///< No button.
 	WID_BC_YES,      ///< Yes button.
+};
+
+/* Admin Company Window */
+enum AdminCompanyButtons {
+	WID_AC_CAPTION,
+	WID_C_COMPANY_EMPTY,
+	WID_C_COMPANY_LOCK,
+	WID_C_COMPANY_UNLOCK,
+	WID_C_COMPANY_NEWSTICKET,
+	WID_C_COMPANY_NEWSTICKET_COMP,
+	WID_C_COMPANY_RESET,
+	WID_C_COMPANY_RESET_SPEC,
+	WID_C_COMPANY_RESET_KICK,
+	WID_C_COMPANY_RESET_KNOWN,
+	WID_C_COMPANY_MOVE_PLAYER,
+	WID_C_RESET_COMPANY_TIMER5,
+	WID_C_RESET_COMPANY_TIMER,
+	WID_C_RESET_COMPANY_TIMER_CANCEL,
+	WID_C_COMPANY_SUSPEND,
+	WID_C_COMPANY_UNSUSPEND,
+	WID_C_COMPANY_AWARNING,
+	WID_C_COMPANY_CANCEL,
+};
+
+enum AdminCompanyButtonsQuery {
+	WID_CQ_RESET_COMPANY_TIMER,
+	WID_CQ_COMPANY_NEWSTICKET,
+	WID_CQ_COMPANY_NEWSTICKET_COMP,
+	WID_CQ_COMPANY_MOVE_PLAYER,
 };
 
 #endif /* WIDGETS_COMPANY_WIDGET_H */
