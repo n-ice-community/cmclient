@@ -7,7 +7,6 @@ namespace citymania {
 
 void SkipFakeCommands(Date date, DateFract date_fract);
 void SetReplaySaveInterval(uint32 interval);
-void LoadCommands(const std::string &filename);
 void CheckIntervalSave();
 bool IsReplayingCommands();
 
@@ -21,6 +20,7 @@ void ExecuteFakeCommands(Date date, DateFract date_fract);
 
 bool ConStartRecord(byte argc, char *argv[]);
 bool ConStopRecord(byte argc, char *argv[]);
+bool ConGameStats(byte argc, char *argv[]);
 
 } // namespace citymania
 

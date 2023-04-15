@@ -31,11 +31,11 @@ void DrawRoadVehDetails(const Vehicle *v, const Rect &r)
 	StringID str;
 	Money feeder_share = 0;
 
-	SetDParam(0, v->engine_type);
+	SetDParam(0, PackEngineNameDParam(v->engine_type, EngineNameContext::VehicleDetails));
 	SetDParam(1, v->build_year);
 	SetDParam(2, v->value);
 	if (_settings_client.gui.newgrf_developer_tools) SetDParam(3, v->index);  // CM
-	DrawString(r.left, r.right, y, _settings_client.gui.newgrf_developer_tools ? STR_CM_VEHICLE_INFO_BUILT_VALUE_WITH_ID : STR_VEHICLE_INFO_BUILT_VALUE);
+	DrawString(r.left, r.right, y, _settings_client.gui.newgrf_developer_tools ? CM_STR_VEHICLE_INFO_BUILT_VALUE_WITH_ID : STR_VEHICLE_INFO_BUILT_VALUE);
 	y += FONT_HEIGHT_NORMAL;
 
 	if (v->HasArticulatedPart()) {

@@ -799,7 +799,7 @@ public:
 		/* Position scrollbar to selected group */
 		for (uint i = 0; i < this->rows; i++) {
 			if (this->groups[i]->index == sel) {
-				this->vscroll->SetPosition(Clamp(i - this->vscroll->GetCapacity() / 2, 0, std::max(this->vscroll->GetCount() - this->vscroll->GetCapacity(), 0)));
+				this->vscroll->SetPosition(i - this->vscroll->GetCapacity() / 2);
 				break;
 			}
 		}
@@ -2723,7 +2723,7 @@ struct CompanyWindow : Window
 			case WID_C_MOD_COMPANY_RESET: {
 				if (!_networking) return;
 				this->query_widget = WID_C_MOD_COMPANY_RESET;
-				ShowQuery(STR_XI_RESET_CAPTION, STR_XI_REALY_RESET, this, ResetCallback);
+				ShowQuery(CM_STR_XI_RESET_CAPTION, CM_STR_XI_REALY_RESET, this, ResetCallback);
 				MarkWholeScreenDirty();
 				break;
 			}

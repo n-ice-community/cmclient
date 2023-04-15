@@ -33,7 +33,6 @@
 
 extern const Station *_viewport_highlight_station;
 extern TileHighlightData _thd;
-extern void MarkCatchmentTilesDirty();
 
 extern DiagDirection _road_station_picker_orientation;
 extern bool CheckClickOnViewportSign(const Viewport *vp, int x, int y, const ViewportSign *sign);
@@ -43,7 +42,6 @@ extern ViewportSignKdtree _viewport_sign_kdtree;
 extern AirportClassID _selected_airport_class;
 extern int _selected_airport_index;
 extern byte _selected_airport_layout;
-extern void CcBuildAirport(Commands cmd, const CommandCost &result, TileIndex tile);
 extern RailType _cur_railtype;  // rail_gui.cpp
 
 struct RailStationGUISettings {
@@ -620,7 +618,7 @@ std::string GetStationCoverageProductionText(TileIndex tile, int w, int h, int r
 
     std::ostringstream s;
     char buffer[DRAW_STRING_BUFFER];
-    GetString(buffer, STR_CM_STATION_BUILD_SUPPLIES, lastof(buffer));
+    GetString(buffer, CM_STR_STATION_BUILD_SUPPLIES, lastof(buffer));
     s << buffer;
     bool first = true;
     for (CargoID i = 0; i < NUM_CARGO; i++) {
@@ -635,7 +633,7 @@ std::string GetStationCoverageProductionText(TileIndex tile, int w, int h, int r
         first = false;
         SetDParam(0, i);
         SetDParam(1, production[i] >> 8);
-        // GetString(buffer, STR_CM_STATION_BUILD_SUPPLIES_CARGO, lastof(buffer));
+        // GetString(buffer, CM_STR_STATION_BUILD_SUPPLIES_CARGO, lastof(buffer));
         GetString(buffer, STR_JUST_CARGO, lastof(buffer));
         s << buffer;
     }

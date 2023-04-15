@@ -33,6 +33,7 @@
 #include "table/sprites.h"
 
 #include "citymania/cm_hotkeys.hpp"
+#include "citymania/cm_commands.hpp"
 
 #include "safeguards.h"
 
@@ -137,7 +138,8 @@ struct StatusBarWindow : Window {
 				}
 				SetDParam(0, 999);
 				SetDParam(1, 999);
-				d = GetStringBoundingBox(STR_CM_STATUSBAR_APM);
+				SetDParam(2, 9999);
+				d = GetStringBoundingBox(CM_STR_STATUSBAR_APM);
 				break;
 
 			default:
@@ -212,7 +214,8 @@ struct StatusBarWindow : Window {
 					auto epm = citymania::GetEPM();
 					SetDParam(0, epm.second);
 					SetDParam(1, epm.first);
-					DrawString(tr, STR_CM_STATUSBAR_APM, TC_FROMSTRING, SA_HOR_CENTER);
+					SetDParam(2, std::min(citymania::get_average_command_lag(), 9999));
+					DrawString(tr, CM_STR_STATUSBAR_APM, TC_FROMSTRING, SA_HOR_CENTER);
 				}
 				break;
 		}

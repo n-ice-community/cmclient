@@ -329,7 +329,7 @@ public:
 		/* House pop */
 		if (td.population != 0) {
 			SetDParam(0, td.population);
-			this->landinfo_data.push_back(GetString(STR_LAND_AREA_INFORMATION_POP));
+			this->landinfo_data.push_back(GetString(CM_STR_LAND_AREA_INFORMATION_POP));
 		}
 
 		/* Cargo acceptance is displayed in a extra multiline */
@@ -974,7 +974,8 @@ void QueryString::ClickEditBox(Window *w, Point pt, int wid, int click_count, bo
 	assert((wi->type & WWT_MASK) == WWT_EDITBOX);
 
 	bool rtl = _current_text_dir == TD_RTL;
-	int clearbtn_width = GetSpriteSize(rtl ? SPR_IMG_DELETE_RIGHT : SPR_IMG_DELETE_LEFT).width;
+	Dimension sprite_size = GetSpriteSize(rtl ? SPR_IMG_DELETE_RIGHT : SPR_IMG_DELETE_LEFT);
+	int clearbtn_width = sprite_size.width + WidgetDimensions::scaled.imgbtn.Horizontal();
 
 	Rect cr = wi->GetCurrentRect().WithWidth(clearbtn_width, !rtl);
 

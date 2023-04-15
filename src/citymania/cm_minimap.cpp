@@ -11,6 +11,8 @@
 #include "../town.h"
 #include "../tunnelbridge_map.h"
 #include "../core/endian_func.hpp"
+#include "../core/geometry_func.hpp"
+#include "../core/kdtree.hpp"
 #include "../vehicle_base.h"
 #include "../sound_func.h"
 #include "../window_func.h"
@@ -170,9 +172,105 @@ static bool _smallmap_show_heightmap = false;
 /** Highlight a specific industry type */
 static IndustryType _smallmap_industry_highlight = INVALID_INDUSTRYTYPE;
 /** State of highlight blinking */
+
 static bool _smallmap_industry_highlight_state;
 /** For connecting company ID to position in owner list (small map legend) */
 static uint _company_to_list_pos[MAX_COMPANIES];
+
+
+struct IconTextSizeHelper {
+protected:
+	RectPadding padding;
+public:
+	Dimension text_dim = {};
+	uint num_lines = 0;
+	Dimension icon_dim;
+	uint line_height;
+	uint text_ofs_y;
+	uint icon_ofs_y;
+	uint text_ofs_x;
+	Dimension size;
+
+	IconTextSizeHelper(SpriteID icon, RectPadding &padding) {
+		this->padding = padding;
+		this->icon_dim = GetSpriteSize(icon);
+		this->text_ofs_x = this->icon_dim.width + WidgetDimensions::scaled.hsep_normal;
+	}
+
+	void add(StringID string_id, FontSize font_size) {
+		this->text_dim = maxdim(this->text_dim, GetStringBoundingBox(string_id, font_size));
+		num_lines++;
+	};
+
+	void calculate() {
+		// TODO handle RTL
+		this->line_height = std::max(this->text_dim.height, this->icon_dim.height);
+		this->text_ofs_y = (this->line_height - this->text_dim.height + 1) / 2;
+		this->icon_ofs_y = (this->line_height - this->icon_dim.height) / 2;
+		this->size = {
+			this->text_ofs_x + this->text_dim.width + this->padding.Horizontal(),
+			this->line_height * this->num_lines + this->padding.Vertical()
+		};
+	}
+
+	std::pair<Rect, Rect> make_rects(int left, int top) {
+		Rect r{left, top, left + (int)this->size.width, top + (int)this->size.height};
+		return {r, r.Shrink(this->padding)};
+	}
+};
+
+struct MinimapIndustryKdtreeEntry {
+    int16 mx;  // subtile (y - x) / 2
+    int16 my;  // subtile (y + x) / 2
+    IndustryID index;
+};
+
+constexpr bool operator==(const MinimapIndustryKdtreeEntry &lhs, const MinimapIndustryKdtreeEntry &rhs) {
+    return lhs.index == rhs.index;
+}
+
+inline int16 Kdtree_MinimapIndustryXYFunc(const MinimapIndustryKdtreeEntry &e, int dim) { return dim == 0 ? e.mx : e.my; }
+typedef Kdtree<MinimapIndustryKdtreeEntry, decltype(&Kdtree_MinimapIndustryXYFunc), int16, int> MinimapIndustryKdtree;
+
+
+MinimapIndustryKdtree _minimap_industry_idx{Kdtree_MinimapIndustryXYFunc};
+uint _max_industry_outputs = 0;
+
+bool is_cached_industry(const Industry *ind) {
+	for (auto i = 0; i < INDUSTRY_NUM_OUTPUTS; i++)
+		if (ind->produced_cargo[i] != INVALID_CARGO)
+			return true;
+	return false;
+}
+
+MinimapIndustryKdtreeEntry get_industry_entry(const Industry *ind) {
+	auto x = TileX(ind->location.tile) * TILE_SIZE + ind->location.w * TILE_SIZE / 2;
+	auto y = TileY(ind->location.tile) * TILE_SIZE + ind->location.h * TILE_SIZE / 2;
+	uint num_outputs = 0;
+	for (auto i = 0; i < INDUSTRY_NUM_OUTPUTS; i++)
+		if (ind->produced_cargo[i] != INVALID_CARGO)
+			num_outputs++;
+	_max_industry_outputs = std::max(_max_industry_outputs, num_outputs);
+	return {(int16)((y - x) / 8), (int16)((y + x) / 8), ind->index};
+}
+
+void minimap_add_industry(const Industry *ind) {
+	if (!is_cached_industry(ind)) return;
+	_minimap_industry_idx.Insert(get_industry_entry(ind));
+}
+
+void minimap_remove_industry(const Industry *ind) {
+	if (!is_cached_industry(ind)) return;
+	_minimap_industry_idx.Remove(get_industry_entry(ind));
+}
+
+void minimap_init_industries() {
+	_max_industry_outputs = 0;
+	for (auto i : Industry::Iterate()) {
+		minimap_add_industry(i);
+	}
+}
+
 
 /**
  * Fills an array for the industries legends.
@@ -674,8 +772,8 @@ inline Point SmallMapWindow::PixelToTile(int px, int py) const
 void SmallMapWindow::SetZoomLevel(ZoomLevelChange change, const Point *zoom_pt)
 {
 	// static const int zoomlevels[] = {1, 2, 4, 6, 8}; // Available zoom levels. Bigger number means more zoom-out (further away).
-	static const int tile_zoomlevels[] = {1, 1, 1, 2, 4, 6, 8}; // Available zoom levels. Bigger number means more zoom-out (further away).
-	static const int ui_zoomlevels[] = {4, 2, 1, 1, 1, 1, 1}; // Available zoom levels. Bigger number means more zoom-out (further away).
+	static const int tile_zoomlevels[] = {1, 1, 1, 1, 1, 2, 4, 6, 8}; // Available zoom levels. Bigger number means more zoom-out (further away).
+	static const int ui_zoomlevels[] = {16, 8, 4, 2, 1, 1, 1, 1, 1}; // Available zoom levels. Bigger number means more zoom-out (further away).
 	static const int MIN_ZOOM_INDEX = 0;
 	static const int MAX_ZOOM_INDEX = lengthof(tile_zoomlevels) - 1;
 
@@ -684,7 +782,7 @@ void SmallMapWindow::SetZoomLevel(ZoomLevelChange change, const Point *zoom_pt)
 	switch (change) {
 		case ZLC_INITIALIZE:
 			cur_index = - 1; // Definitely different from new_index.
-			new_index = Clamp((int)ZOOM_LVL_GUI, MIN_ZOOM_INDEX, MAX_ZOOM_INDEX);
+			new_index = Clamp((int)ZOOM_LVL_GUI + 2, MIN_ZOOM_INDEX, MAX_ZOOM_INDEX);
 			tile.x = tile.y = 0;
 			break;
 
@@ -910,6 +1008,48 @@ void SmallMapWindow::DrawVehicles(const DrawPixelInfo *dpi, Blitter *blitter) co
 	}
 }
 
+void SmallMapWindow::DrawIndustryProduction(const DrawPixelInfo *dpi) const
+{
+	if (this->map_type != CM_SMT_IMBA) return;
+
+	// Debug(misc, 0, "DrawIndustryProduction {},{} {},{}", dpi->left, dpi->top, sign_w, sign_h);
+	auto ptl = this->PixelToTile(dpi->left - this->industry_max_sign.width, dpi->top - this->industry_max_sign.height);
+	auto pbr = this->PixelToTile(dpi->left + dpi->width, dpi->top + dpi->height);
+
+	_minimap_industry_idx.FindContained(
+		(ptl.y - ptl.x) / 8,
+		(ptl.y + ptl.x) / 8,
+		(pbr.y - pbr.x) / 8,
+		(pbr.y + pbr.x) / 8,
+		[this] (auto &e) {
+			auto ind = Industry::GetIfValid(e.index);
+			if (ind == nullptr) return;
+			auto pt = this->TileToPixel(
+				TileX(ind->location.tile) * TILE_SIZE + ind->location.w * TILE_SIZE / 2,
+				TileY(ind->location.tile) * TILE_SIZE + ind->location.h * TILE_SIZE / 2
+			);
+
+			IconTextSizeHelper its{SPR_CARGO_COAL, WidgetDimensions::scaled.framerect};
+			for (auto i = 0; i < INDUSTRY_NUM_OUTPUTS; i++) {
+				if (ind->produced_cargo[i] == INVALID_CARGO) continue;
+				SetDParam(0, ind->last_month_production[i]);
+				its.add(STR_JUST_INT, FS_SMALL);
+			}
+			its.calculate();
+			this->industry_max_sign = maxdim(this->industry_max_sign, its.size);
+			auto [r, ir] = its.make_rects(pt.x, pt.y);
+	        GfxFillRect(r, PALETTE_TO_TRANSPARENT, FILLRECT_RECOLOUR);
+			for (auto i = 0; i < INDUSTRY_NUM_OUTPUTS; i++) {
+				if (ind->produced_cargo[i] == INVALID_CARGO) continue;
+				DrawSprite(CargoSpec::Get(ind->produced_cargo[i])->GetCargoIcon(), PAL_NONE, ir.left, ir.top + its.icon_ofs_y);
+				SetDParam(0, ind->last_month_production[i]);
+				DrawString(ir.left + its.text_ofs_x, ir.right, ir.top + its.text_ofs_y, STR_JUST_INT, TC_WHITE, SA_LEFT, false, FS_SMALL);
+				ir.top += its.line_height;
+			}
+		}
+	);
+}
+
 /**
  * Adds town names to the smallmap.
  * @param dpi the part of the smallmap to be drawn into
@@ -1023,6 +1163,8 @@ void SmallMapWindow::DrawSmallMap(DrawPixelInfo *dpi) const
 
 	/* Draw vehicles */
 	if (this->map_type == SMT_CONTOUR || this->map_type == SMT_VEHICLES) this->DrawVehicles(dpi, blitter);
+
+	if (this->ui_zoom >= 4) this->DrawIndustryProduction(dpi);
 
 	/* Draw link stat overlay */
 	if (this->map_type == SMT_LINKSTATS) this->overlay->Draw(dpi);
@@ -1198,6 +1340,13 @@ void SmallMapWindow::RebuildColourIndexIfNecessary()
 
 	SetDParam(0, 9999999);  // max reasonable population
 	this->town_cache.max_sign = GetStringBoundingBox(CM_STR_SMALLMAP_POPULATION);
+
+	SetDParam(0, 9999);
+	auto text_dim = GetStringBoundingBox(STR_JUST_INT, FS_SMALL);
+	this->industry_max_sign = {
+		text_dim.width + WidgetDimensions::scaled.framerect.Horizontal(),
+		text_dim.height * _max_industry_outputs + WidgetDimensions::scaled.framerect.Vertical(),
+	};
 }
 
 /* virtual */ void SmallMapWindow::OnPaint()
@@ -1812,6 +1961,15 @@ public:
 	{
 		for (NWidgetBase *child_wid = this->head; child_wid != nullptr; child_wid = child_wid->next) child_wid->Draw(w);
 	}
+
+	void FillDirtyWidgets(std::vector<NWidgetBase *> &dirty_widgets) override
+	{
+		if (this->base_flags & WBF_DIRTY) {
+			dirty_widgets.push_back(this);
+		} else {
+			for (NWidgetBase *child_wid = this->head; child_wid != nullptr; child_wid = child_wid->next) child_wid->FillDirtyWidgets(dirty_widgets);
+		}
+	}
 };
 
 /** Widget parts of the smallmap display. */
@@ -1834,7 +1992,7 @@ static const NWidgetPart _nested_smallmap_bar[] = {
 					NWidget(WWT_PUSHIMGBTN, COLOUR_BROWN, WID_SM_CENTERMAP),
 							SetDataTip(SPR_IMG_SMALLMAP, STR_SMALLMAP_CENTER), SetFill(1, 1),
 					NWidget(WWT_IMGBTN, COLOUR_BROWN, CM_WID_SM_IMBA),
-							SetDataTip(SPR_IMG_SHOW_COUNTOURS, STR_CM_SMALLMAP_TOOLTIP_SHOW_IMBA_ON_MAP), SetFill(1, 1),
+							SetDataTip(SPR_IMG_SHOW_COUNTOURS, CM_STR_SMALLMAP_TOOLTIP_SHOW_IMBA_ON_MAP), SetFill(1, 1),
 					NWidget(WWT_IMGBTN, COLOUR_BROWN, WID_SM_CONTOUR),
 							SetDataTip(SPR_IMG_SHOW_COUNTOURS, STR_SMALLMAP_TOOLTIP_SHOW_LAND_CONTOURS_ON_MAP), SetFill(1, 1),
 					NWidget(WWT_IMGBTN, COLOUR_BROWN, WID_SM_VEHICLES),

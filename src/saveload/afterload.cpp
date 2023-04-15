@@ -64,6 +64,7 @@
 #include "../table/control_codes.h"
 
 #include "../citymania/cm_highlight.hpp"
+#include "../citymania/cm_minimap.hpp"
 
 #include "saveload_internal.h"
 
@@ -584,13 +585,15 @@ void AfterLoadFindBTProCBInfo() {
  */
 static void StartScripts()
 {
-	/* Start the GameScript. */
-	Game::StartNew();
+	/* Script debug window requires AIs to be started before trying to start GameScript. */
 
 	/* Start the AIs. */
 	for (const Company *c : Company::Iterate()) {
 		if (Company::IsValidAiID(c->index)) AI::StartNew(c->index, false);
 	}
+
+	/* Start the GameScript. */
+	Game::StartNew();
 
 	ShowAIDebugWindowIfAIError();
 }
@@ -3258,6 +3261,7 @@ bool AfterLoadGame()
 	AfterLoadLinkGraphs();
 	AfterLoadFindBTProCBInfo();
 	citymania::InitializeZoningMap();
+	citymania::minimap_init_industries();
 
 	if ((!_networking || _network_server ) && _settings_client.gui.cm_pause_after_load) _pause_mode = PM_PAUSED_NORMAL;
 

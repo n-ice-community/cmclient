@@ -31,14 +31,12 @@ extern CommandCallback _current_callback;
 
 class Command {
 public:
-    TileIndex tile = 0;
     bool no_estimate_flag = false;
     CompanyID company = INVALID_COMPANY;
     StringID error = (StringID)0;
     CommandCallback callback = nullptr;
 
     Command() {}
-    Command(TileIndex tile) :tile{tile} {}
     virtual ~Command() {}
 
     virtual bool _post(::CommandCallback *callback)=0;
@@ -47,15 +45,13 @@ public:
 
     template <typename Tcallback>
     bool post(Tcallback callback) {
-        CompanyID old = _current_company;
+        CompanyID company_backup = _current_company;
         if (this->company != INVALID_COMPANY)
             _current_company = company;
         _no_estimate_command = this->no_estimate_flag;
         _current_callback = this->callback;
         bool res = this->_post(reinterpret_cast<::CommandCallback *>(reinterpret_cast<void(*)()>(callback)));
-        _current_callback = nullptr;
-        _no_estimate_command = false;
-        _current_company = old;
+        _current_company = company_backup;
         return res;
     }
 
@@ -72,13 +68,8 @@ public:
         return res;
     }
 
-    bool test() {
-        return this->call(DC_NONE).Succeeded();
-    }
-
-    Command &with_tile(TileIndex tile) {
-        this->tile = tile;
-        return *this;
+    CommandCost test() {
+        return this->call(DC_NONE);
     }
 
     Command &with_error(StringID error) {

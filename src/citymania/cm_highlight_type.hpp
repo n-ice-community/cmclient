@@ -19,6 +19,51 @@
 
 namespace citymania {
 
+enum ZoningBorder: uint8 {
+    NONE = 0,
+    TOP_LEFT = 1,
+    TOP_RIGHT = 2,
+    BOTTOM_RIGHT = 4,
+    BOTTOM_LEFT = 8,
+    TOP_CORNER = 16,
+    RIGHT_CORNER = 32,
+    BOTTOM_CORNER = 64,
+    LEFT_CORNER = 128,
+    FULL = TOP_LEFT | TOP_RIGHT | BOTTOM_LEFT | BOTTOM_RIGHT,
+};
+DECLARE_ENUM_AS_BIT_SET(ZoningBorder);
+
+
+class TileHighlight {
+public:
+    SpriteID ground_pal = PAL_NONE;
+    SpriteID structure_pal = PAL_NONE;
+    SpriteID highlight_ground_pal = PAL_NONE;
+    SpriteID highlight_structure_pal = PAL_NONE;
+    SpriteID sprite = 0;
+    SpriteID selection = PAL_NONE;
+    ZoningBorder border[4] = {};
+    SpriteID border_color[4] = {};
+    uint border_count = 0;
+
+    void add_border(ZoningBorder border, SpriteID color) {
+        if (border == ZoningBorder::NONE || !color) return;
+        this->border[this->border_count] = border;
+        this->border_color[this->border_count] = color;
+        this->border_count++;
+    }
+
+    void tint_all(SpriteID color) {
+        if (!color) return;
+        this->ground_pal = this->structure_pal = color;
+    }
+
+    void clear_borders() {
+        this->border_count = 0;
+    }
+};
+
+
 class TileIndexWrapper {
 public:
     TileIndex tile;
@@ -46,7 +91,9 @@ public:
         ROAD_DEPOT,
 
         AIRPORT_TILE,
+        INDUSTRY_TILE,
         POINT,
+        RECT,
         NUMBERED_RECT,
         END,
     };
@@ -93,6 +140,12 @@ public:
             StationGfx gfx;
         } airport_tile;
         struct {
+            IndustryType ind_type;
+            byte ind_layout;
+            TileIndexDiff tile_diff;
+            IndustryGfx gfx;
+        } industry_tile;
+        struct {
             uint32 number;
         } numbered_rect;
     } u;
@@ -108,9 +161,12 @@ public:
     static ObjectTileHighlight make_road_stop(SpriteID palette, RoadType roadtype, DiagDirection ddir, bool is_truck);
     static ObjectTileHighlight make_road_depot(SpriteID palette, RoadType roadtype, DiagDirection ddir);
     static ObjectTileHighlight make_airport_tile(SpriteID palette, StationGfx gfx);
+    static ObjectTileHighlight make_industry_tile(SpriteID palette, IndustryType ind_type, byte ind_layout, TileIndexDiff tile_diff, IndustryGfx gfx);
     static ObjectTileHighlight make_point(SpriteID palette);
+    static ObjectTileHighlight make_rect(SpriteID palette);
     static ObjectTileHighlight make_numbered_rect(SpriteID palette, uint32 number);
 };
+
 
 
 class DetachedHighlight {
@@ -250,6 +306,8 @@ public:
     sp<Blueprint> blueprint = nullptr;
     IndustryType ind_type = INVALID_INDUSTRYTYPE;
     uint32 ind_layout = 0;
+    CommandCost cost;
+    Dimension overlay_dim;
 
 protected:
     bool tiles_updated = false;
@@ -257,7 +315,6 @@ protected:
     std::vector<DetachedHighlight> sprites = {};
     void AddTile(TileIndex tile, ObjectTileHighlight &&oh);
     // void AddSprite(TileIndex tile, ObjectTileHighlight &&oh);
-    void UpdateTiles();
     void PlaceExtraDepotRail(TileIndex tile, DiagDirection dir, Track track);
 
 public:
@@ -276,8 +333,11 @@ public:
 
     static ObjectHighlight make_industry(TileIndex tile, IndustryType ind_type, uint32 ind_layout);
 
+    TileHighlight GetTileHighlight(const TileInfo *ti);
     void Draw(const TileInfo *ti);
+    void DrawSelectionOverlay(DrawPixelInfo *dpi);
     void DrawOverlay(DrawPixelInfo *dpi);
+    void UpdateTiles();
     void MarkDirty();
 };
 

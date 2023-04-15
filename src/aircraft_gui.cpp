@@ -34,11 +34,11 @@ void DrawAircraftDetails(const Aircraft *v, const Rect &r)
 	int y = r.top;
 	for (const Aircraft *u = v; u != nullptr; u = u->Next()) {
 		if (u->IsNormalAircraft()) {
-			SetDParam(0, u->engine_type);
+			SetDParam(0, PackEngineNameDParam(u->engine_type, EngineNameContext::VehicleDetails));
 			SetDParam(1, u->build_year);
 			SetDParam(2, u->value);
 			if (_settings_client.gui.newgrf_developer_tools) SetDParam(3, v->index);  // CM
-			DrawString(r.left, r.right, y, _settings_client.gui.newgrf_developer_tools ? STR_CM_VEHICLE_INFO_BUILT_VALUE_WITH_ID : STR_VEHICLE_INFO_BUILT_VALUE);
+			DrawString(r.left, r.right, y, _settings_client.gui.newgrf_developer_tools ? CM_STR_VEHICLE_INFO_BUILT_VALUE_WITH_ID : STR_VEHICLE_INFO_BUILT_VALUE);
 			y += FONT_HEIGHT_NORMAL;
 
 			SetDParam(0, u->cargo_type);

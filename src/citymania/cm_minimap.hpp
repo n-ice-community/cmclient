@@ -44,6 +44,10 @@ void ShowSmallMap();
 void BuildLandLegend();
 void BuildOwnerLegend();
 
+void minimap_add_industry(const Industry *ind);
+void minimap_remove_industry(const Industry *ind);
+void minimap_init_industries();
+
 
 class NWidgetSmallmapDisplay;
 
@@ -102,6 +106,7 @@ protected:
         Dimension max_sign;
         std::vector<std::tuple<const Town *, uint32, uint>> towns;
     } town_cache;
+    mutable Dimension industry_max_sign;
 
     static void BreakIndustryChainLink();
     Point SmallmapRemapCoords(int x, int y) const;
@@ -178,6 +183,7 @@ protected:
     void DrawMapIndicators() const;
     void DrawSmallMapColumn(void *dst, uint xc, uint yc, int pitch, int reps, int start_pos, int end_pos, int y, int end_y, Blitter *blitter) const;
     void DrawVehicles(const DrawPixelInfo *dpi, Blitter *blitter) const;
+    void DrawIndustryProduction(const DrawPixelInfo *dpi) const;
     void DrawTowns(const DrawPixelInfo *dpi) const;
     void DrawSmallMap(DrawPixelInfo *dpi) const;
 

@@ -271,15 +271,15 @@ static const NWidgetPart _nested_build_industry_widgets[] = {
 	EndContainer(),
 	NWidget(WWT_PANEL, COLOUR_DARK_GREEN), SetResize(1, 0),
 		NWidget(NWID_HORIZONTAL), SetPIP(2, 0, 2),
-			NWidget(WWT_LABEL, COLOUR_DARK_GREEN), SetMinimalSize(140, 14), SetDataTip(STR_FUND_INDUSTRY_FORBIDDEN_TILES_TITLE, STR_NULL),
+			NWidget(WWT_LABEL, COLOUR_DARK_GREEN), SetMinimalSize(140, 14), SetDataTip(CM_STR_FUND_INDUSTRY_FORBIDDEN_TILES_TITLE, STR_NULL),
 			NWidget(NWID_SPACER), SetFill(1, 0),
 		EndContainer(),
 		NWidget(NWID_HORIZONTAL), SetPIP(2, 0, 2),
 			NWidget(NWID_SPACER), SetFill(1, 0),
 			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_DPI_FT_OFF), SetMinimalSize(60, 12),
-											SetDataTip(STR_FUND_INDUSTRY_FORBIDDEN_TILES_OFF, STR_FUND_INDUSTRY_FORBIDDEN_TILES_OFF_TOOLTIP),
+											SetDataTip(CM_STR_FUND_INDUSTRY_FORBIDDEN_TILES_OFF, CM_STR_FUND_INDUSTRY_FORBIDDEN_TILES_OFF_TOOLTIP),
 			NWidget(WWT_TEXTBTN, COLOUR_GREY, WID_DPI_FT_ON), SetMinimalSize(60, 12),
-											SetDataTip(STR_FUND_INDUSTRY_FORBIDDEN_TILES_ON, STR_FUND_INDUSTRY_FORBIDDEN_TILES_ON_TOOLTIP),
+											SetDataTip(CM_STR_FUND_INDUSTRY_FORBIDDEN_TILES_ON, CM_STR_FUND_INDUSTRY_FORBIDDEN_TILES_ON_TOOLTIP),
 			NWidget(NWID_SPACER), SetFill(1, 0),
 		EndContainer(),
 		NWidget(NWID_SPACER), SetMinimalSize(0, 2),
@@ -688,9 +688,10 @@ public:
 				if (y < this->count) { // Is it within the boundaries of available data?
 					this->selected_index = y;
 					_cm_funding_type = this->selected_type = this->index[y];
-					_cm_funding_layout = 0;
-					citymania::SetIndustryForbiddenTilesHighlight(this->selected_type);
 					const IndustrySpec *indsp = (this->selected_type == INVALID_INDUSTRYTYPE) ? nullptr : GetIndustrySpec(this->selected_type);
+
+					_cm_funding_layout = (indsp == nullptr ? 0 : InteractiveRandomRange((uint32)indsp->layouts.size()));
+					citymania::SetIndustryForbiddenTilesHighlight(this->selected_type);
 
 					this->SetDirty();
 
@@ -749,8 +750,8 @@ public:
 		/* We do not need to protect ourselves against "Random Many Industries" in this mode */
 		const IndustrySpec *indsp = GetIndustrySpec(this->selected_type);
 		uint32 seed = InteractiveRandom();
-		uint32 layout_index = InteractiveRandomRange((uint32)indsp->layouts.size());
-		if (_cm_funding_layout > 0) layout_index = _cm_funding_layout - 1;
+		// uint32 layout_index = InteractiveRandomRange((uint32)indsp->layouts.size());
+		uint32 layout_index = _cm_funding_layout;
 
 		if (_game_mode == GM_EDITOR) {
 			/* Show error if no town exists at all */
@@ -769,6 +770,7 @@ public:
 			cur_company.Restore();
 			old_generating_world.Restore();
 			_ignore_restrictions = false;
+			_cm_funding_layout = InteractiveRandomRange((uint32)indsp->layouts.size());
 		} else {
 			success = Command<CMD_BUILD_INDUSTRY>::Post(STR_ERROR_CAN_T_CONSTRUCT_THIS_INDUSTRY, tile, this->selected_type, layout_index, false, seed);
 		}
@@ -830,7 +832,7 @@ public:
 					const IndustrySpec *indspec = GetIndustrySpec(this->selected_type);
 					size_t num_layouts = indspec->layouts.size();
 					MarkTileDirtyByTile(TileVirtXY(_thd.pos.x, _thd.pos.y)); // redraw tile selection
-					_cm_funding_layout = (_cm_funding_layout + 1) % (num_layouts + 1);
+					_cm_funding_layout = (_cm_funding_layout + 1) % num_layouts;
 					return ES_HANDLED;
 				} else return ES_NOT_HANDLED;
 		}
@@ -3143,7 +3145,14 @@ struct IndustryCargoesWindow : public Window {
 			case WID_IC_CARGO_DROPDOWN: {
 				DropDownList lst;
 				for (const CargoSpec *cs : _sorted_standard_cargo_specs) {
-					lst.emplace_back(new DropDownListStringItem(cs->name, cs->Index(), false));
+					if (_settings_client.gui.developer < 1) {
+						lst.emplace_back(new DropDownListStringItem(cs->name, cs->Index(), false));
+						continue;
+					}
+					DropDownListParamStringItem *item = new DropDownListParamStringItem(CM_STR_CARGO_WITH_ID, cs->Index(), false);
+					item->SetParam(0, cs->name);
+					item->SetParam(1, cs->Index());
+					lst.emplace_back(item);
 				}
 				if (!lst.empty()) {
 					int selected = (this->ind_cargo >= NUM_INDUSTRYTYPES) ? (int)(this->ind_cargo - NUM_INDUSTRYTYPES) : -1;
@@ -3157,7 +3166,14 @@ struct IndustryCargoesWindow : public Window {
 				for (IndustryType ind : _sorted_industry_types) {
 					const IndustrySpec *indsp = GetIndustrySpec(ind);
 					if (!indsp->enabled) continue;
-					lst.emplace_back(new DropDownListStringItem(indsp->name, ind, false));
+					if (_settings_client.gui.developer < 1) {
+						lst.emplace_back(new DropDownListStringItem(indsp->name, ind, false));
+						continue;
+					}
+					DropDownListParamStringItem *item = new DropDownListParamStringItem(CM_STR_INDUSTRY_TYPE_WITH_ID, ind, false);
+					item->SetParam(0, indsp->name);
+					item->SetParam(1, ind);
+					lst.emplace_back(item);
 				}
 				if (!lst.empty()) {
 					int selected = (this->ind_cargo < NUM_INDUSTRYTYPES) ? (int)this->ind_cargo : -1;

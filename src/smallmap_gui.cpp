@@ -1829,6 +1829,15 @@ public:
 	{
 		for (NWidgetBase *child_wid = this->head; child_wid != nullptr; child_wid = child_wid->next) child_wid->Draw(w);
 	}
+
+	void FillDirtyWidgets(std::vector<NWidgetBase *> &dirty_widgets) override
+	{
+		if (this->base_flags & WBF_DIRTY) {
+			dirty_widgets.push_back(this);
+		} else {
+			for (NWidgetBase *child_wid = this->head; child_wid != nullptr; child_wid = child_wid->next) child_wid->FillDirtyWidgets(dirty_widgets);
+		}
+	}
 };
 
 /** Widget parts of the smallmap display. */
@@ -1851,7 +1860,7 @@ static const NWidgetPart _nested_smallmap_bar[] = {
 					NWidget(WWT_PUSHIMGBTN, COLOUR_BROWN, WID_SM_CENTERMAP),
 							SetDataTip(SPR_IMG_SMALLMAP, STR_SMALLMAP_CENTER), SetFill(1, 1),
 					NWidget(WWT_IMGBTN, COLOUR_BROWN, CM_WID_SM_IMBA),
-							SetDataTip(SPR_IMG_SHOW_COUNTOURS, STR_CM_SMALLMAP_TOOLTIP_SHOW_IMBA_ON_MAP), SetFill(1, 1),
+							SetDataTip(SPR_IMG_SHOW_COUNTOURS, CM_STR_SMALLMAP_TOOLTIP_SHOW_IMBA_ON_MAP), SetFill(1, 1),
 					NWidget(WWT_IMGBTN, COLOUR_BROWN, WID_SM_CONTOUR),
 							SetDataTip(SPR_IMG_SHOW_COUNTOURS, STR_SMALLMAP_TOOLTIP_SHOW_LAND_CONTOURS_ON_MAP), SetFill(1, 1),
 					NWidget(WWT_IMGBTN, COLOUR_BROWN, WID_SM_VEHICLES),

@@ -919,8 +919,7 @@ static void DoRegularFunding(Town *t)
 		if (UINT32_MAX - t->last_funding + _tick_counter < TOWN_GROWTH_TICKS) return;
 	} else if (_tick_counter - t->last_funding < TOWN_GROWTH_TICKS) return;
 
-	citymania::cmd::DoTownAction(t->index, HK_FUND)
-		.with_tile(t->xy)
+	citymania::cmd::DoTownAction(t->xy, t->index, HK_FUND)
 		.no_estimate()
 		.as_company(_local_company)
 		.post();
@@ -931,19 +930,19 @@ static void DoRegularAdvertising(Town *t) {
 	if (!HasBit(t->advertise_regularly, _local_company))
 		return;
 
-	if (t->ad_ref_goods_entry == NULL) {
+	if (t->ad_ref_goods_entry == nullptr) {
 		// Pick as ref station and cargo with min rating
 		for (Station *st : Station::Iterate()) {
 			if (st->owner == _local_company && DistanceManhattan(t->xy, st->xy) <= 20) {
 				for (CargoID i = 0; i < NUM_CARGO; i++)
-					if (st->goods[i].HasRating() && (t->ad_ref_goods_entry == NULL ||
+					if (st->goods[i].HasRating() && (t->ad_ref_goods_entry == nullptr ||
 					    	t->ad_ref_goods_entry->rating < st->goods[i].rating)) {
 						t->ad_ref_goods_entry = &st->goods[i];
 					}
 			}
 		}
 
-		if (t->ad_ref_goods_entry == NULL)
+		if (t->ad_ref_goods_entry == nullptr)
 			return;
 	}
 
@@ -956,11 +955,16 @@ static void DoRegularAdvertising(Town *t) {
 	} else if (_tick_counter - t->last_advertisement < 30) return;
 	t->last_advertisement = _tick_counter;
 
-	citymania::cmd::DoTownAction(t->index, HK_LADVERT)
-		.with_tile(t->xy)
+	auto prev_rating = t->ad_ref_goods_entry->rating;
+	citymania::cmd::DoTownAction(t->xy, t->index, HK_LADVERT)
 		.no_estimate()
 		.as_company(_local_company)
-		.post();
+		.with_callback([=] (bool res) -> bool {
+			if (res && prev_rating == t->ad_ref_goods_entry->rating) {
+				t->ad_ref_goods_entry = nullptr;
+			}
+			return true;
+		}).post();
 }
 
 static void TownTickHandler(Town *t)

@@ -1191,7 +1191,9 @@ bool SettingEntry::UpdateFilterState(SettingFilter &filter, bool force_visible)
 	}
 
 	if (visible) {
-		if (filter.type != ST_ALL && sd->GetType() != filter.type) {
+		if (filter.type != ST_ALL &&
+				((filter.type != CM_ST_CITYMANIA || (sd->flags & CM_SF_CITYMANIA) == 0) &&
+				sd->GetType() != filter.type)) {
 			filter.type_hides = true;
 			visible = false;
 		}
@@ -1781,7 +1783,7 @@ static SettingsContainer &GetSettingsTree()
 		SettingsPage *vehicles = main->Add(new SettingsPage(STR_CONFIG_SETTING_VEHICLES));
 		{
 			/** Vehicle control page */
-			SettingsPage *veh_control = vehicles->Add(new SettingsPage(STR_CONFIG_SETTING_VEHICLES_CTRL));
+			SettingsPage *veh_control = vehicles->Add(new SettingsPage(CM_STR_CONFIG_SETTING_VEHICLES_CTRL));
 			{
 				veh_control->Add(new SettingEntry("gui.new_nonstop"));
 				veh_control->Add(new SettingEntry("gui.cm_no_loading_on_transfer_order"));
@@ -1789,7 +1791,7 @@ static SettingsContainer &GetSettingsTree()
 			}
 
 			/** Order Shorcuts page */
-			SettingsPage *orders = veh_control->Add(new SettingsPage(STR_CONFIG_SETTING_ORDER_SHORTCUTS));
+			SettingsPage *orders = veh_control->Add(new SettingsPage(CM_STR_CONFIG_SETTING_ORDER_SHORTCUTS));
 			{
 				orders->Add(new SettingEntry("gui.cm_ctrl_order_mod"));
 				orders->Add(new SettingEntry("gui.cm_shift_order_mod"));
@@ -2120,6 +2122,7 @@ struct GameSettingsWindow : Window {
 					case ST_GAME:    SetDParam(0, _game_mode == GM_MENU ? STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_MENU : STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_INGAME); break;
 					case ST_COMPANY: SetDParam(0, _game_mode == GM_MENU ? STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_MENU : STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME); break;
 					case ST_CLIENT:  SetDParam(0, STR_CONFIG_SETTING_TYPE_DROPDOWN_CLIENT); break;
+					case CM_ST_CITYMANIA:  SetDParam(0, CM_STR_CONFIG_SETTING_TYPE_DROPDOWN_CITYMANIA); break;
 					default:         SetDParam(0, STR_CONFIG_SETTING_TYPE_DROPDOWN_ALL); break;
 				}
 				break;
@@ -2145,6 +2148,7 @@ struct GameSettingsWindow : Window {
 				list.emplace_back(new DropDownListStringItem(_game_mode == GM_MENU ? STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_MENU : STR_CONFIG_SETTING_TYPE_DROPDOWN_GAME_INGAME, ST_GAME, false));
 				list.emplace_back(new DropDownListStringItem(_game_mode == GM_MENU ? STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_MENU : STR_CONFIG_SETTING_TYPE_DROPDOWN_COMPANY_INGAME, ST_COMPANY, false));
 				list.emplace_back(new DropDownListStringItem(STR_CONFIG_SETTING_TYPE_DROPDOWN_CLIENT, ST_CLIENT, false));
+				list.emplace_back(new DropDownListStringItem(CM_STR_CONFIG_SETTING_TYPE_DROPDOWN_CITYMANIA, CM_ST_CITYMANIA, false));
 				break;
 		}
 		return list;

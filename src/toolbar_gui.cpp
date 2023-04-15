@@ -247,9 +247,9 @@ static void PopupMainCompanyToolbMenu(Window *w, int widget, int grey = 0)
 			list.emplace_back(new DropDownListStringItem(STR_NETWORK_COMPANY_LIST_CLIENT_LIST, CTMN_CLIENT_LIST, false));
 
 			if (_local_company == COMPANY_SPECTATOR) {
-				list.emplace_back(new DropDownListStringItem(STR_CM_NETWORK_COMPANY_LIST_NEW_COMPANY, CTMN_NEW_COMPANY, NetworkMaxCompaniesReached()));
+				list.emplace_back(new DropDownListStringItem(CM_STR_NETWORK_COMPANY_LIST_NEW_COMPANY, CTMN_NEW_COMPANY, NetworkMaxCompaniesReached()));
 			} else {
-				list.emplace_back(new DropDownListStringItem(STR_CM_NETWORK_COMPANY_LIST_SPECTATE, CTMN_SPECTATE, false));
+				list.emplace_back(new DropDownListStringItem(CM_STR_NETWORK_COMPANY_LIST_SPECTATE, CTMN_SPECTATE, false));
 			}
 			break;
 		case WID_TN_STORY:
@@ -361,7 +361,7 @@ static CallBackFunction ToolbarOptionsClick(Window *w)
 		list.emplace_back(new DropDownListStringItem(STR_SETTINGS_MENU_GAMESCRIPT_SETTINGS,  OME_GAMESCRIPT_SETTINGS, false));
 	}
 	list.emplace_back(new DropDownListStringItem(STR_SETTINGS_MENU_NEWGRF_SETTINGS,          OME_NEWGRFSETTINGS, false));
-	list.emplace_back(new DropDownListStringItem(STR_SETTINGS_MENU_ZONING,                   OME_ZONING, false));
+	list.emplace_back(new DropDownListStringItem(CM_STR_SETTINGS_MENU_ZONING,                OME_ZONING, false));
 	list.emplace_back(new DropDownListStringItem(STR_SETTINGS_MENU_TRANSPARENCY_OPTIONS,     OME_TRANSPARENCIES, false));
 	list.emplace_back(new DropDownListItem(-1, false));
 	list.emplace_back(new DropDownListCheckedItem(STR_SETTINGS_MENU_TOWN_NAMES_DISPLAYED,    OME_SHOW_TOWNNAMES, false, HasBit(_display_opt, DO_SHOW_TOWN_NAMES)));
@@ -1582,6 +1582,21 @@ public:
 		return nullptr;
 	}
 
+
+	void FillDirtyWidgets(std::vector<NWidgetBase *> &dirty_widgets) override
+	{
+		if (this->base_flags & WBF_DIRTY) {
+			dirty_widgets.push_back(this);
+		} else {
+			for (NWidgetBase *child_wid = this->head; child_wid != nullptr; child_wid = child_wid->next) {
+				if (child_wid->type == NWID_SPACER) continue;
+				if (!this->visible[((NWidgetCore*)child_wid)->index]) continue;
+
+				child_wid->FillDirtyWidgets(dirty_widgets);
+			}
+		}
+	}
+
 	/**
 	 * Get the arrangement of the buttons for the toolbar.
 	 * @param width the new width of the toolbar.
@@ -2221,8 +2236,7 @@ struct MainToolbarWindow : Window {
 				break;
 
 			case CM_CBF_BUILD_HQ:
-				if(citymania::cmd::BuildObject(OBJECT_HQ, 0)
-					   	.with_tile(tile)
+				if(citymania::cmd::BuildObject(tile, OBJECT_HQ, 0)
 					   	.with_error(STR_ERROR_CAN_T_BUILD_COMPANY_HEADQUARTERS)
 					   	.post()) {
 					ResetObjectToPlace();
