@@ -6103,7 +6103,7 @@ STR_CC_GLOBAL_COMMANDS_TITLE                                    :{WHITE}Login an
 STR_CC_TOKEN_WELCOME                                            :{BLACK}Welcome back {WHITE}{RAW_STRING}{BLACK} :)
 STR_CC_TOKEN_CLICKME                                            :{BLACK}Click the big button to Login automatically
 STR_CC_TOKEN_ENJOY                                              :{BLACK}  Respect the rules and enjoy the game. :)
-STR_CC_TOKEN_LOGIN                                              :{LTBLUE}Get Token --> Login
+STR_CC_TOKEN_LOGIN                                              :{BLACK}Get Token --> Login
 STR_CC_TOKEN_LOGIN_TOOLTIP                                      :{BLACK}Get Token from website and executes !login XXXX
 STR_CC_TOKEN_LOGIN_ERROR                                        :{WHITE}Wrong Username or Password!
 
@@ -6199,7 +6199,7 @@ STR_CC_GLOBAL_VARIOUS_VOTE_RESTART                              :{BLACK}Vote Res
 STR_CC_GLOBAL_VARIOUS_VOTE_RESTART_MAP                          :{BLACK}Vote Restart Map
 STR_CC_GLOBAL_VARIOUS_VOTE                                      :{BLACK}Vote
 STR_CC_GLOBAL_VARIOUS_VOTE_STATUS                               :{BLACK}Vote Status
-STR_CC_GLOBAL_VARIOUS_GOODBYE                                   :{RED}Good luck and Goodbye
+STR_CC_GLOBAL_VARIOUS_GOODBYE                                   :{BLACK}Good luck and Goodbye
 STR_CC_OTHER_ADMIN                                              :{WHITE}Other Admin commands:
 STR_CC_OTHER_ADMIN_ACKNOWLEDGE                                  :{BLACK}Acknowledge
 STR_CC_OTHER_ADMIN_SOLVE                                        :{BLACK}Solve
