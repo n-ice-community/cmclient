@@ -2197,7 +2197,7 @@ struct MainToolbarWindow : Window {
 			case MTHK_CLIENT_LIST: if (_networking) ShowClientList(); break;
 			case MTHK_SIGN_LIST: ShowSignList(); break;
 			case MTHK_LANDINFO: cbf = PlaceLandBlockInfo(); break;
-			case CM_MTHK_COMMANDS_GUI: if (_networking) { citymania::ShowCommandsToolbar(); } break;
+			//case CM_MTHK_COMMANDS_GUI: if (_networking) { citymania::ShowCommandsToolbar(); } break;
 			case CM_MTHK_BUILD_HQ: if(_current_company != COMPANY_SPECTATOR){ cbf = BuildCompanyHQ(); } break;
 			case CM_MTHK_CARGOTABLE: if(_current_company != COMPANY_SPECTATOR){ citymania::ShowCompanyCargos(_current_company); } break;
 			case CM_MTHK_TREES: if(_current_company != COMPANY_SPECTATOR){ BuildTreesWindow(); } break;
@@ -2360,11 +2360,11 @@ static Hotkey maintoolbar_hotkeys[] = {
 	Hotkey((uint16)0, "sign_list", MTHK_SIGN_LIST),
 	Hotkey((uint16)0, "land_info", MTHK_LANDINFO),
 	Hotkey(WKC_CTRL  | 'H', "build_hq", CM_MTHK_BUILD_HQ),
-	Hotkey('N', "nova_commands", CM_MTHK_COMMANDS_GUI),
+    //Hotkey('N', "nova_commands", CM_MTHK_COMMANDS_GUI),
 	Hotkey(WKC_CTRL | WKC_F2, "cargo_table", CM_MTHK_CARGOTABLE),
 	Hotkey('I', "trees", CM_MTHK_TREES),
-	Hotkey((uint16)0, "zoning", CM_MTHK_ZONING),
-	Hotkey((uint16)0, "login_window", CM_MTHK_LOGINWINDOW),
+	Hotkey('O', "zoning", CM_MTHK_ZONING),
+    Hotkey('N', "login_window", CM_MTHK_LOGINWINDOW),
 	Hotkey((uint16)0, "settings_advanced", CM_MTHK_SETTINGS_ADV),
 	Hotkey((uint16)0, "newgrf_window", CM_MTHK_NEWGRF),
 	Hotkey((uint16)0, "cm_smallmap_toggle", CM_MTHK_SMALLMAP_TOGGLE),
