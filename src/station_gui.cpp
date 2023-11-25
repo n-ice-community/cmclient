@@ -2174,7 +2174,18 @@ static WindowDesc _station_view_desc(
  */
 void ShowStationViewWindow(StationID station)
 {
-	AllocateWindowDescFront<StationViewWindow>(&_station_view_desc, station);
+	//AllocateWindowDescFront<StationViewWindow>(&_station_view_desc, station);
+	//catchment with ctrl+click, stationwindow with click
+	extern const Station* _viewport_highlight_station;
+	if (_ctrl_pressed) {
+		if (_viewport_highlight_station != nullptr) {
+			if (_viewport_highlight_station == Station::Get(station))
+				SetViewportCatchmentStation(Station::Get(station), false);
+			else SetViewportCatchmentStation(Station::Get(station), true);
+		}
+		else SetViewportCatchmentStation(Station::Get(station), true);
+	}
+	else AllocateWindowDescFront<StationViewWindow>(&_station_view_desc, station);
 }
 
 /** Struct containing TileIndex and StationID */
