@@ -6136,7 +6136,7 @@ STR_NETWORK_SERVER_LIST_JOIN_GAME_SERVER_VIP_TOOLTIP            :{BLACK}Open VIP
 STR_CC_SERVER_FREELANCER                                        :{WHITE}No community selected
 STR_NETWORK_DIRECT_JOIN_GAME                                    :{BLACK}{RAW_STRING}
 STR_NETWORK_DIRECT_JOIN_GAME_TOOLTIP                            :{BLACK}Join server directly
-STR_CC_BUILD                                                    :{BLACK}(Build 134B)
+STR_CC_BUILD                                                    :{BLACK}(Build 134C)
 STR_CC_ADMIN_LOGIN_WRONG_SERVER                                 :{BLACK}Not a correct community server
 STR_CC_IRC_LINK_CHAT                                            :{BLACK}IRC Chat
 STR_CC_IRC_LINK_CHAT_TOOLTIP                                    :{BLACK}Open mibbit in browser to connect to #btpro-chat IRC channel

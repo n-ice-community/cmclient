@@ -359,7 +359,7 @@ int CrashLog::CreateFileName(char *filename, const char *filename_last, const ch
 char *CrashLog::FillCrashLog(char *buffer, const char *last) const
 {
 	buffer += seprintf(buffer, last, "*** OpenTTD Crash Report ***\n\n");
-	buffer += seprintf(buffer, last, "*** OpenTTD Crash Report ***\nPatched client (Build 134B)\nPlease, unless you encounter this bug with unpatched OpenTTD version, report bug to admins of your community.\n\n");
+	buffer += seprintf(buffer, last, "*** OpenTTD Crash Report ***\nPatched client (Build 134C)\nPlease, unless you encounter this bug with unpatched OpenTTD version, report bug to admins of your community.\n\n");
 	buffer += UTCTime::Format(buffer, last, "Crash at: %Y-%m-%d %H:%M:%S (UTC)\n");
 
 	YearMonthDay ymd;
