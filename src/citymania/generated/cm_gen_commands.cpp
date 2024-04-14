@@ -2,14 +2,14 @@
 
 #include "../../stdafx.h"
 #include "cm_gen_commands.hpp"
-#include "../../src/misc_cmd.h"
-#include "../../src/object_cmd.h"
-#include "../../src/order_cmd.h"
-#include "../../src/rail_cmd.h"
-#include "../../src/road_cmd.h"
-#include "../../src/station_cmd.h"
-#include "../../src/town_cmd.h"
-#include "../../src/tunnelbridge_cmd.h"
+#include "../src/misc_cmd.h"
+#include "../src/object_cmd.h"
+#include "../src/order_cmd.h"
+#include "../src/rail_cmd.h"
+#include "../src/road_cmd.h"
+#include "../src/station_cmd.h"
+#include "../src/town_cmd.h"
+#include "../src/tunnelbridge_cmd.h"
 namespace citymania {
 namespace cmd {
 
