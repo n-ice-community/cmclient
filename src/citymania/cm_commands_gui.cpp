@@ -38,7 +38,7 @@ static const char * const NOVAPOLIS_IPV6_PRIMARY   = "2a02:2b88:2:1::1d73:1";
 static const char * const NOVAPOLIS_IPV4_SECONDARY = "89.111.65.225";
 static const char * const NOVAPOLIS_IPV6_SECONDARY = "fe80::20e:7fff:fe23:bee0";
 static const char * const NOVAPOLIS_STRING         = "CityMania";
-static const char * const NICE_HTTP_LOGIN          = "http://n-ice.org/openttd/gettoken.php?user=%s&password=%s";
+static const char * const NICE_HTTP_LOGIN          = "http://n-ice.org/openttd/gettoken_md5salt.php?user=%s&password=%s";
 static const char * const BTPRO_HTTP_LOGIN         = "http://openttd.btpro.nl/gettoken-enc.php?user=%s&password=%s";
 
 static const char * const NOVA_IP_ADDRESSES[] = {
@@ -775,12 +775,34 @@ struct LoginWindow : Window {
 				break;
 			}
 			case LQW_NICE_LOGIN:
-			case LQW_NICE_PW:
 			case LQW_BTPRO_LOGIN:
 			case LQW_BTPRO_PW:
 				UrlEncode(item, lastof(item), str);
 				SetLoginItem(INI_LOGIN_KEYS[this->query_widget - 3], item); // - LWW_NICE_LOGIN + NICE_LOGIN
 				break;
+            case LQW_NICE_PW:
+			{
+                 Md5 password, salted_password;
+                 password.Append(str, strlen(str));
+                 uint8 digest[16];
+                 char hex_output[16 * 2 + 1];
+                 password.Finish(digest);
+                 for (int di = 0; di < 16; ++di){
+                     seprintf(hex_output + di * 2,lastof(hex_output), "%02x",digest[di]);
+                 }
+                 char tobe_salted[4 + 16 * 2 + 6 + 1] = {0};
+                 strecat(tobe_salted, "nice", lastof(tobe_salted));
+                 strecat(tobe_salted + 4, hex_output,lastof(tobe_salted));
+                 strecat(tobe_salted + 4 + 16 * 2, "client",lastof(tobe_salted));
+                 assert(strlen(tobe_salted) == (sizeof(tobe_salted) - 1));
+                 salted_password.Append(tobe_salted,strlen(tobe_salted));
+                 salted_password.Finish(digest);
+                 for (int di = 0; di < 16; ++di){
+                     seprintf(hex_output + di * 2,lastof(hex_output), "%02x",digest[di]);
+                 }
+                 SetLoginItem(NICE_PW, hex_output);         
+				 break;
+			}
 			default: return;
 		}
 		this->SetDirty();
