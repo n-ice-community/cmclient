@@ -579,17 +579,17 @@ void ShowCommandsToolbar()
 // login window
 class GetHTTPContent: public HTTPCallback {
 public:
-	GetHTTPContent(const std::string &uri): uri{uri} {
+	GetHTTPContent() {
 		this->proccessing = false;
 		this->buf_last = lastof(buf);
 	}
 	bool proccessing;
 
-	void InitiateLoginSequence() {
+	void InitiateLoginSequence(const std::string& uri) {
 		if(this->proccessing) return;
 		this->proccessing = true;
 		this->cursor = this->buf;
-		NetworkHTTPSocketHandler::Connect(this->uri, this);
+		NetworkHTTPSocketHandler::Connect(uri, this);
 	}
 
 	void OnReceiveData(std::unique_ptr<char[]> data, size_t length) override {
@@ -627,7 +627,6 @@ private:
 	char buf[HTTPBUFLEN];
 	char *buf_last;
 	char *cursor;
-	std::string uri;
 };
 
 std::string urlencode(const std::string &s) {
@@ -677,8 +676,9 @@ void AccountLogin(CommunityName community){
 		default:
 			return;
 	}
-	static GetHTTPContent login(uri);
-	login.InitiateLoginSequence();
+
+	static GetHTTPContent login{};
+	login.InitiateLoginSequence(uri);
 }
 
 //login window
